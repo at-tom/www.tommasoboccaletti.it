@@ -47,16 +47,45 @@ const isReload = navEntries.length > 0 && navEntries[0].type === 'reload';
 const hasVisited = !isReload && (sessionStorage.getItem('visited_index') === 'true');
 
 let beeLoaded = false;
+let imagesLoaded = false;
 let minLoadingTimeElapsed = false;
 
+// Preload the first three Emergentissimi images programmatically to wait for them
+const preloadImages = [
+    'ASSETS/progetti/emergentissimi_0.webp',
+    'ASSETS/progetti/emergentissimi_1.webp',
+    'ASSETS/progetti/emergentissimi_2.webp'
+];
+let loadedCount = 0;
+preloadImages.forEach(src => {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+        loadedCount++;
+        if (loadedCount === preloadImages.length) {
+            imagesLoaded = true;
+            tryRevealSite();
+        }
+    };
+    img.onerror = () => {
+        // Fallback in case of network issue
+        loadedCount++;
+        if (loadedCount === preloadImages.length) {
+            imagesLoaded = true;
+            tryRevealSite();
+        }
+    };
+});
+
 function tryRevealSite() {
-    if (beeLoaded && minLoadingTimeElapsed) revealSite();
+    if (beeLoaded && imagesLoaded && minLoadingTimeElapsed) revealSite();
 }
 
+// Bzzz initial loader minimum time
 setTimeout(() => {
     minLoadingTimeElapsed = true;
     tryRevealSite();
-}, 1600);
+}, 2000); // 2 seconds minimum Bzzz duration
 
 function revealSite() {
     const loadingScreen = document.getElementById('loading-screen');
@@ -110,7 +139,9 @@ function flyInElements() {
     });
 }
 
-const bzzSound = new Audio('ASSETS/bzz.mp3');
+let updateActiveByScroll;
+
+const bzzSound = new Audio('/ASSETS/bzz.mp3');
 bzzSound.volume = 0.5;
 let mouseClientX = -9999;
 let mouseClientY = -9999;
@@ -212,10 +243,20 @@ function initThreeJS() {
         mouseClientY = e.clientY;
     });
 
+    let lastWidth = window.innerWidth;
     window.addEventListener('resize', () => {
         if (!renderer || !camera) return;
-        baseY = isAboutPage ? BEE_CONFIG.about.y : (window.innerWidth <= 900 ? BEE_CONFIG.mobile.y : BEE_CONFIG.desktop.y);
-        const scale = isAboutPage ? BEE_CONFIG.about.scale : (window.innerWidth <= 900 ? BEE_CONFIG.mobile.scale : BEE_CONFIG.desktop.scale);
+        const currentWidth = window.innerWidth;
+        const isMobile = window.innerWidth <= 900;
+        
+        // On mobile, ignore resize triggers caused by height changes (e.g. browser bar hiding)
+        if (isMobile && currentWidth === lastWidth) {
+            return;
+        }
+        lastWidth = currentWidth;
+
+        baseY = isAboutPage ? BEE_CONFIG.about.y : (isMobile ? BEE_CONFIG.mobile.y : BEE_CONFIG.desktop.y);
+        const scale = isAboutPage ? BEE_CONFIG.about.scale : (isMobile ? BEE_CONFIG.mobile.scale : BEE_CONFIG.desktop.scale);
         if (beeModel) {
             beeModel.scale.set(scale, scale, scale);
             beeModel.position.set(baseX, baseY, 0);
@@ -318,33 +359,9 @@ function startFlyAway() {
     if (flyAwayStart !== null || !beeModel) return;
     flyAwayStart = performance.now();
     flyAwayTimeout = setTimeout(() => {
-        if (!beeDisposed) disposeBee();
+        // Suspend rendering instead of full disposal to keep GLB in memory
+        cancelAnimationFrame(rafId);
     }, TRANSITION_DURATION);
-}
-
-function disposeBee() {
-    if (flyAwayTimeout) {
-        clearTimeout(flyAwayTimeout);
-        flyAwayTimeout = null;
-    }
-    beeDisposed = true;
-    cancelAnimationFrame(rafId);
-
-    scene.traverse((obj) => {
-        if (obj.isMesh) {
-            obj.geometry?.dispose();
-            if (Array.isArray(obj.material)) {
-                obj.material.forEach((m) => m.dispose());
-            } else {
-                obj.material?.dispose();
-            }
-        }
-    });
-
-    renderer.dispose();
-    if (renderer.domElement && renderer.domElement.parentNode) {
-        renderer.domElement.parentNode.removeChild(renderer.domElement);
-    }
 }
 
 function goToProjects() {
@@ -366,13 +383,19 @@ function goToLanding() {
     phase = 'landing';
     isTransitioning = true;
 
+    // Ensure elements are instantly visible (no repeated fly-in animation)
+    showElementsInstantly();
+
     wrapper.classList.remove('show-projects');
 
-    disposeBee();
-
-    beeDisposed = false;
+    if (flyAwayTimeout) {
+        clearTimeout(flyAwayTimeout);
+        flyAwayTimeout = null;
+    }
     flyAwayStart = null;
-    initThreeJS();
+
+    // Simply resume the animation loop with the existing model
+    cancelAnimationFrame(rafId);
     rafId = requestAnimationFrame(animateThreeJS);
 
     setTimeout(() => {
@@ -866,7 +889,7 @@ function initProjectsUI() {
         updateLightboxHeader(projectBlocks[index]);
     }
 
-    function updateActiveByScroll() {
+    updateActiveByScroll = function() {
         if (!projectBlocks.length) return;
 
         let centerY;
