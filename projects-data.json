@@ -1,0 +1,1076 @@
+[
+  {
+    "id": "p0",
+    "title": "Emergentissimi",
+    "year": "2023 / ongoing",
+    "years": "2023 — ongoing",
+    "type": "Music Festival,Event Design",
+    "about": "Co-founded in Milan in 2023, Emergentissimi is a music festival dedicated to cultivating the professional trajectories of emerging artists through enhanced visibility and strategic support.",
+    "project": "Collaborating with a team of young designers, we engineered a comprehensive visual identity spanning digital and physical channels, managing content production and social strategy to ensure rigorous brand coherence.<br><br>Now approaching its third anniversary with over twenty iterations primarily hosted at BASE Milano, the platform has expanded to include partnerships with Volvo Studio Milano and specialized formats such as the Pride-themed FROC*SSIMI, the songwriting showcase Parole Parole Parole! and exclusive release parties.",
+    "team": "Olivia Missale, Giorgia Fontana, Alice de Francesco, Marco Fasano",
+    "archive": false,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/emergentissimi_0.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/emergentissimi_1.webp",
+            "caption": "see @emergentissimi on instagram",
+            "badge": {
+              "icon": "instagram",
+              "href": "https://instagram.com/emergentissimi"
+            }
+          }
+        ]
+      },
+      {
+        "row": "row-doppia-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/emergentissimi_2.webp",
+            "caption": "ph @ Olivia Missale",
+            "badge": {
+              "icon": "web",
+              "href": "https://emergentissimi.example.com"
+            }
+          },
+          {
+            "image": "ASSETS/progetti/emergentissimi_3.webp",
+            "caption": "ph @ Olivia Missale"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "video": "ASSETS/progetti/emergentissimi_video.mp4"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/emergentissimi_4.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-doppia",
+        "items": [
+          {
+            "image": "ASSETS/progetti/emergentissimi_5.webp"
+          },
+          {
+            "image": "ASSETS/progetti/emergentissimi_6.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/emergentissimi_7.webp",
+            "caption": "ph @ Matteo Roscigno"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/emergentissimi_8.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-doppia",
+        "items": [
+          {
+            "image": "ASSETS/progetti/frocissimi_2.webp"
+          },
+          {
+            "image": "ASSETS/progetti/frocissimi_3.webp"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p1",
+    "title": "Iki",
+    "year": "2025",
+    "years": "2025",
+    "type": "Interaction Design & Prototyping",
+    "about": "Iki is a product designed to support children's well-being. It is a companion that attaches to their backpack and monitors environmental quality in real time, tracking CO₂ and TVOC levels. Iki gives feedback and advice directly to the child while sending real-time data to parents through a dedicated app.",
+    "project": "Iki is designed to keep parents and children connected, it even allows playing peekaboo together through the device.<br><br>Technically, Iki is built on the M5Stack Core2, powered by an ESP32 microcontroller, prototyped in C++, 3D printed, and made interactive with Protopie.",
+    "team": "Stella Facconi, Doga Su Yildirim",
+    "archive": false,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/IKI_0.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/IKI_1.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/IKI_2.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/IKI_3.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/IKI_4.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/IKI_5.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/IKI_6.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/IKI_7.webp"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p2",
+    "title": "Zona Sarpi",
+    "year": "2025 / ongoing",
+    "years": "2025 — ongoing",
+    "type": "Milano Design Week, Event Design",
+    "about": "Zona Sarpi is the official Milan Design Week district located within the city's historic Chinatown. Curated by The Playful Living, the project celebrates the multicultural identity of the district, requiring a continuous and comprehensive visual design and communication strategy to strengthen its public presence.",
+    "project": "Working directly for the studio in close synergy with the lead designer across two editions, the contribution focused on developing both physical and digital materials. A core priority was maintaining strict brand consistency across all touchpoints, creating a cohesive visual narrative for the district's exhibitions and installations.<br><br>The scope of work encompassed web design and social media management to effectively engage a diverse audience, alongside on-site event photography to capture and document the dynamic energy of the design week.",
+    "team": "Elvira W. Zhao, The Playful Living's Team",
+    "archive": false,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_0.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_1.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_2.webp",
+            "caption": "see @zonasarpi on instagram",
+            "badge": {
+              "icon": "instagram",
+              "href": "https://www.instagram.com/zonasarpi/"
+            }
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_3.webp",
+            "caption": "MDW26 official guide"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_4.webp",
+            "caption": "MDW26 official guide"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_5.webp",
+            "caption": "see www.zonasarpi.com",
+            "badge": {
+              "icon": "web",
+              "href": "https://www.zonasarpi.com/"
+            }
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_6.webp",
+            "caption": "MDW25 official guide"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_7.webp",
+            "caption": "MDW25 district map"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_8.webp",
+            "caption": "Sarpi flags, made by various illustrators and designers"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SARPI_9.webp"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p3",
+    "title": "LA MONTAGNA CHE NON SI VEDE",
+    "year": "2026",
+    "years": "2026",
+    "type": "Art",
+    "links": "<a href=\"https://youtu.be/ky-gGMuPMb0\" target=\"_blank\">here</a> the italian version<br> <a href=\"https://youtu.be/TKkwEp8gyYk\" target=\"_blank\">here</a> the english version",
+    "about": "LA MONTAGNA CHE NON SI VEDE is an experimental video work selected as a winning entry in the 'Visioni D'alta Quota' initiative, launched by MEET Digital Culture Center, Politecnico di Milano, and Regione Lombardia for the Milano Cortina 2026 Winter Olympics.",
+    "project": "Inspired by Paralympic champion Silvia Parente and her Foundation, the project utilizes a synthesis of TouchDesigner and motion graphics to explore the spatial perception of blindness in alpine environments.<br><br>It was streamed across Milan, Brescia and Bergamo's urban screens and transit hubs, including metro systems, Malpensa and Orio al Serio airports, throughout the Winter Olympic Games.<br><br>Complementing the video, an immersive installation links the digital mountain's resolution to the audience's physical configuration, using TouchDesigner to analyze interpersonal proximity and reveal the image only through collective presence.",
+    "team": "Stella Facconi",
+    "archive": false,
+    "gallery": [
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/meet_malpensa.webp",
+            "caption": "The video was streamed in all major airports and stations in Lombardy during the Winter Olympics"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/meet_screen.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/meet_touchdesigner.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "video": "ASSETS/progetti/MONTAGNA_VID.mp4",
+            "caption": "The original clips have been treated to chromatically differentiate the mountain from the people"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/meet_poco.webp",
+            "caption": "Interactive installation based on video processing"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/meet_tanto.webp",
+            "caption": "Interactive installation based on video processing"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p4",
+    "title": "SPIRA",
+    "year": "2026",
+    "years": "2026",
+    "type": "Product Design & Prototyping",
+    "about": "SPIRA is a smart device to attach to hangers for decluttering, built to counter wardrobe inertia and passive clothing accumulation. It turns your closet into an active ecosystem by giving forgotten garments a soul.",
+    "project": "By tracking how long an item goes unworn, the device visualizes neglect through an intuitive, biomorphic breathing light. It eases the psychological friction of decluttering by prompting you to reflect on what you really wear. Moving a neglected hanger on the rack activates Sharing Mode, creating an easy way for roommates to borrow clothes.<br><br>Developed through a rigorous research-through-design process, the project evolved through five physical iterations and three extensive rounds of user testing, including immersive multi-station showcases. The final functional prototype packs an Arduino Nano 33 BLE Sense, ToF proximity sensors, and custom LED strip animations inside an organic shell. ",
+    "team": "Stella Facconi, Virginia Taramasco",
+    "archive": false,
+    "placeholder": false,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SPIRA_0.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SPIRA_1.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SPIRA_2.webp",
+            "caption": "Through various lighting behaviors (intensity, temperature, and frequency), SPIRA communicates how long a garment has been forgotten."
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SPIRA_3.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SPIRA_4.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SPIRA_5.webp",
+            "badge": {
+              "icon": "web",
+              "href": "https://github.com/at-tom/SPIRA-codes"
+            }
+          }
+        ]
+      },
+      {
+        "row": "row-doppia-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SPIRA_6_1.webp",
+            "caption": "several iterations of the prototype during user testing: from these, changes were made for the final product"
+          },
+          {
+            "image": "ASSETS/progetti/SPIRA_6_2.webp",
+            "caption": "several iterations of the prototype during user testing: from these, changes were made for the final product"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SPIRA_7.webp",
+            "caption": "first iteration of the prototype with Arduino components"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SPIRA_8.webp",
+            "caption": "3D model printed with white filament for user testing"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p5",
+    "title": "ENTANGLEMENT",
+    "year": "2026",
+    "years": "2026",
+    "type": "Podcast & Branding",
+    "about": "Entanglement is a six-episode speculative podcast that investigates the deep connections between the human, the non-human, and quantum art. Taking its name from the physical phenomenon where particles remain inextricably linked regardless of distance, the series explores complex concepts such as algorithmic bias and quantum aesthetics.",
+    "project": "The contribution encompassed the complete branding and visual identity of the podcast, culminating in a strategic launch event that featured an immersive live coding performance to introduce the project to the public.<br><br>To translate these abstract scientific principles into a tangible digital experience, a dedicated web platform was developed to host the episodes. A central element of this platform is a custom audio player programmed entirely in p5.js.",
+    "team": "Stella Facconi, Virginia Taramasco, Andrea Torriani",
+    "links": "<a href=\"https://at-tom.github.io/ENTANGLEMENT-PODCAST/\" target=\"_blank\">here</a> the web player",
+    "archive": false,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/ENTANGLEMENT_0.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/ENTANGLEMENT_1.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/ENTANGLEMENT_2.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/ENTANGLEMENT_3.webp",
+            "caption": "To launch the podcast, a Live Coding event was planned in Spazio Maiocchi (Milan)"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/ENTANGLEMENT_4.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/ENTANGLEMENT_5.webp",
+            "caption": "the website player isn't designed to replace mainstream players, but as a way to enhance the fruction of a podcast about very visual digital art"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "video": "ASSETS/progetti/ENTANGLEMENT_VIDEO.mp4",
+            "badge": {
+              "icon": "web",
+              "href": "https://at-tom.github.io/ENTANGLEMENT-PODCAST/"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p6",
+    "title": "Sneic Milano",
+    "year": "2024 / 2025",
+    "years": "2024 — 2025",
+    "type": "Speculative Design",
+    "about": "Sneic is a speculative design project that imagines the existence of a secret reptilian office-core society tasked with generating suffering in the world through carefully orchestrated events carried out by Sneic agents, well-known VIPs and politicians. The project explores themes of power, media manipulation, and the construction of distorted institutional visual systems.",
+    "project": "At the core of the project is an interactive communication prototype called GeCO, the Generator of Organized Chaos. Within this context, I focused on designing the user experience of the machine, developing its physical functionality using Arduino and programming languages such as C++ and Python. I also worked on 3D modeling and created the digital and interactive interface of the machine using TouchDesigner and the Arduino's data.<br><br>The group's undergraduate thesis was based on this project.",
+    "team": "Elia Caccia, Giorgia Fontana, Alessia Piscioli, Renata Romagnuolo, Alice Torzoni",
+    "links": "The project was the basis of the <a href=\"ASSETS/progetti/SNEIC_Thesis.pdf\" target=\"_blank\">undergraduate thesis</a> of the group members",
+    "archive": false,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_0.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_1.webp",
+            "caption": "Sneic has an aesthetic that is inspired by international, corporate graphics, with an alien and reptilian twist"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_2.webp",
+            "caption": "Sneic has an aesthetic that is inspired by international, corporate graphics, with an alien and reptilian twist"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_3.webp",
+            "caption": "Sneic has an aesthetic that is inspired by international, corporate graphics, with an alien and reptilian twist"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_4.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_gif.gif"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_5.webp",
+            "caption": "The Generator of Organized Chaos (GeCO) is the Sneic speculative prototype that allows you to control reptilian agents, celebrities, politicians and influential people, to make them carry out malevolent actions",
+            "badge": {
+              "icon": "download",
+              "href": "ASSETS/progetti/GeCO_UJM.pdf",
+              "download": true
+            }
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_7.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_6.webp",
+            "caption": "GeCO was completely prototyped starting from Arduino components, a wooden body and 3D printed interactive components"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/SNEIC_8.webp",
+            "caption": "See the undergraduate thesis on Sonic (IT) which describes the entire development of the project",
+            "badge": {
+              "icon": "download",
+              "href": "ASSETS/progetti/SNEIC_Thesis.pdf",
+              "download": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p7",
+    "title": "The Ceruleum",
+    "year": "2026",
+    "years": "2026",
+    "type": "Art",
+    "about": "Developed for the @common.index call 'An Ecology of Beasts', The Ceruleum is a video artwork that reinterprets the mythology of the medieval bestiary to explore a human-fish duality. The work synthesizes motion graphics, VFX, and TouchDesigner point clouds, merging digital abstraction with ancient lore.",
+    "project": "The visual narrative relies on the contrast between two distinct languages. Detailed 13th-century imagery, drawn from the Der naturen bloeme manuscript, acts as anatomical sketches to illustrate the beast’s physical strength. In contrast, contemporary sequences render the creature blurred and undefined, preserving the mysticism of a being that is never fully revealed. Throughout the video, a dominant use of black evokes the deep abyss, reinforcing the creature's connection to darkness, pressure, and the unknown.<br><br>The project was exhibited at TXT Studio in Milan and subsequently showcased at BASE Milano during Milan Design Week 2026.",
+    "team": "Filippo Mirandola",
+    "archive": false,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/Ceruleum_1.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "video": "ASSETS/progetti/Ceruleum_vid.mp4",
+            "controls": true
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/Ceruleum_2.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/Ceruleum_3.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/Ceruleum_4.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/Ceruleum_5.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/Ceruleum_6.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/Ceruleum_7.webp"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p8",
+    "title": "Assisi",
+    "year": "2024",
+    "years": "2024",
+    "type": "Visual Identity",
+    "about": "For the UNESCO World Heritage site of Assisi, Italy, the entire visual system, institutional communication, graphic artifacts, and promotional signage were designed.",
+    "project": "The branding project considered the site's historical and artistic value, starting from UNESCO criteria and translating them into an innovative, attentive, and context-respectful coordinated image.<br><br>The app 'Assisi, Adventure Through Time' was also conceived, designed to make the site exploration engaging and accessible to a young audience, unfolding through photographic missions that guide children in discovering the main points of interest.",
+    "team": "Andrea Calò, Stella Facconi, Giulia Rinaldo, Matteo Roscigno",
+    "archive": false,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/as_1.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-doppia-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/as_2.webp"
+          },
+          {
+            "image": "ASSETS/progetti/as_3.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/as_4.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/as_5.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-doppia-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/as_6.webp"
+          },
+          {
+            "image": "ASSETS/progetti/as_7.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/as_8.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/as_9.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/as_10.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "video": "ASSETS/progetti/as_video.mp4",
+            "controls": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p9",
+    "title": "Amazon Fire TV Ally Bundle",
+    "year": "2026",
+    "years": "2026",
+    "type": "UX & UI Design",
+    "about": "Amazon Fire TV Ally Bundle is a redesign project that reimagines the Amazon Fire TV ecosystem specifically for co-living environments. Grounded in extensive user research combining digital ethnography, sentiment analysis, card sorting, and tree testing, the project addresses the privacy risks, algorithmic contamination, and social friction caused by traditional single-user smart TV interfaces in shared households.",
+    "project": "To resolve the tension between shared hardware and personal privacy, the project introduces a connected multi-tenant system distributed across three distinct touchpoints: the TV, the Hub, and the Remote. While the redesigned TV interface strictly manages the individual sphere with isolated user profiles and personal PIN protection, a dedicated shared Hub built on a redesigned Amazon Echo Show transparently handles TV slot bookings and household agreements. Bridging the physical and digital layers, the custom remote features an integrated fingerprint sensor for instant, friction-free profile switching.<br><br>The concept was validated through high-fidelity digital and physical prototyping and comprehensive usability testing, successfully proving that shared device frictions can be seamlessly resolved through system design.",
+    "team": "Cecilia Ferrentino, Elios Speroni, Doga Su Yildirim, Elif Tellal",
+    "archive": false,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/AMAZON_0.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "video": "ASSETS/progetti/AMAZON_V1.mp4",
+            "caption": "To redesign the smart TV, a targeted research was conducted through literature review, digital ethnography, card sorting, user testing and interviews with various subjects."
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/AMAZON_2.webp",
+            "caption": "The redesign includes the TV, the remote and a new hub to manage the shared things of the shared household"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/AMAZON_3.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/AMAZON_4.webp",
+            "caption": "The remote control has been simplified and fingerprint recognition has been added for frictionless access to your PIN-protected profile and biometric recognition."
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "video": "ASSETS/progetti/AMAZON_V2.mp4",
+            "style": "transform: scale(1.06);"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/AMAZON_5.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/AMAZON_6.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "video": "ASSETS/progetti/AMAZON_V3.mp4",
+            "controls": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p10",
+    "title": "Productive: a Bending Spoons design sprint",
+    "year": "2026",
+    "years": "2026",
+    "type": "App Redesign, UX/UI Design",
+    "about": "Productive: a Bending Spoons design sprint is a rapid app redesign project developed during an intensive 24-hour design sprint hosted at the Bending Spoons headquarters. Driven by a comprehensive analysis of user data, combined with qualitative and quantitative insights and design know-how, the project aimed to completely rethink the user experience of the habit-tracking application.",
+    "project": "The workflow progressed from detailed wireframing to a complete high-fidelity prototype, introducing a radically new visual style. At its core, the conceptual redesign heavily emphasizes social interaction to drive user engagement, aiming to motivate positive behavioral change through a newly structured and highly immersive challenge system.",
+    "links": "<a href=\"ASSETS/progetti/PRODUCTIVE_wireframe.png\" target=\"_blank\">here</a> the complete wireframe with rationales",
+    "team": "",
+    "archive": true,
+    "gallery": [
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/PRODUCTIVE_0.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/PRODUCTIVE_1.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/PRODUCTIVE_2.webp",
+            "caption": "see the entire wireframe with rationales",
+            "badge": {
+              "icon": "download",
+              "href": "ASSETS/progetti/PRODUCTIVE_wireframe.png",
+              "download": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p11",
+    "title": "A Zine For The Little Ones",
+    "year": "2023",
+    "years": "2023",
+    "type": "Illustrated Book",
+    "about": "Sulle Ali del Vento is a children's editorial zine born from a collective initiative involving various designers and illustrators, aiming to connect kids with nature through storytelling and imagination.",
+    "project": "For this volume, I curated the entire book development, taking care of the story writing, illustrations, and graphic layout. The narrative guides young readers on a poetic journey inspired by natural elements, with a visual style designed to spark curiosity and environmental awareness.",
+    "team": "",
+    "archive": true,
+    "gallery": [
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/zi_1.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-doppia-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/zi_2.jpg"
+          },
+          {
+            "image": "ASSETS/progetti/zi_3.jpg"
+          }
+        ]
+      },
+      {
+        "row": "row-doppia-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/zi_4.jpg"
+          },
+          {
+            "image": "ASSETS/progetti/zi_5.jpg"
+          }
+        ]
+      },
+      {
+        "row": "row-doppia",
+        "items": [
+          {
+            "image": "ASSETS/progetti/zi_6.png"
+          },
+          {
+            "image": "ASSETS/progetti/zi_7.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p12",
+    "title": "Taroccata",
+    "year": "2023",
+    "years": "2023",
+    "type": "Personal Project",
+    "about": "Taroccata is a personal redesign project of the Major Arcana, reinterpreted in a contemporary key through a pop and minimalist graphic language.",
+    "project": "The deck features a series of original illustrations, created using only three colors — red, black, and white — to craft a visual world that is bold, symbolic, and direct. Each card has been reimagined with a personal and iconic lens, preserving the essence of the original symbol while translating it into an essential, evocative graphic aesthetic.",
+    "team": "",
+    "archive": true,
+    "gallery": [
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/tar_1.jpg"
+          }
+        ]
+      },
+      {
+        "row": "row-doppia",
+        "items": [
+          {
+            "image": "ASSETS/progetti/tar_2.png"
+          },
+          {
+            "image": "ASSETS/progetti/tar_3.png"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "p13",
+    "title": "Something I Like",
+    "year": "2022 / ongoing",
+    "years": "2022 — ongoing",
+    "type": "Drawing Collection",
+    "about": "Something I Like is a collection of digital illustrations born as a space for visual and conceptual experimentation. Each image draws inspiration from a different theme, transforming it into a small exercise in style and meaning.",
+    "project": "The series doesn't follow a linear narrative but moves freely between subjects and impressions, keeping a light and playful tone, often with grotesque or symbolic accents. The project acts as a personal lab to explore digital illustration techniques, refine color use, and reflect on the role of images in contemporary communication.",
+    "team": "",
+    "archive": true,
+    "gallery": [
+      {
+        "row": "row-doppia-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/dis_1.webp"
+          },
+          {
+            "image": "ASSETS/progetti/dis_2.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-doppia-full",
+        "items": [
+          {
+            "image": "ASSETS/progetti/dis_3.webp"
+          },
+          {
+            "image": "ASSETS/progetti/dis_4.webp"
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
+          {
+            "image": "ASSETS/progetti/dis_5.jpg"
+          }
+        ]
+      }
+    ]
+  }
+]

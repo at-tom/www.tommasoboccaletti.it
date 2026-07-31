@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tommaso Boccaletti Portfolio</title>
+
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="mobile.css" media="(max-width: 900px)" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+
+<body>
+
+    <div id="custom-cursor" aria-hidden="true">
+        <div class="cursor-icon"></div>
+        <div class="cursor-caption" id="cursor-caption"></div>
+    </div>
+
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-zzz">
+            <span style="animation-delay:0.1s">B</span><span style="animation-delay:0.3s">z</span><span
+                style="animation-delay:0.5s">z</span><span style="animation-delay:0.7s">z</span>
+        </div>
+    </div>
+
+    <div class="scroll-snap-wrapper" id="snap-wrapper">
+
+        <section class="top-section snap-child" id="top-section">
+
+            <header class="site-header h-margin">
+                <a href="#top-section" class="header-left" data-fly>Portfolio of*</a>
+                <a href="#projects" class="header-center" data-fly>Projects</a>
+                <a href="about.html" class="header-right" data-fly>About me</a>
+            </header>
+
+            <div id="landing" class="landing">
+                <div id="canvas-container"></div>
+
+                <div class="landing-label label-visual h-margin" data-fly>Visual</div>
+                <div class="landing-label label-designer h-margin" data-fly>Designer</div>
+            </div>
+
+            <div class="landing-footer h-margin">
+                <span class="footer-left" data-fly>*Tommaso Boccaletti</span>
+                <span class="footer-center" data-fly>
+                    <span class="hint-scroll">scroll down to enter my world</span>
+                    <span class="hint-feed">double click to drop a flower for the bee</span>
+                    <span class="bee-score" id="bee-score" aria-hidden="true"></span>
+                </span>
+                <span class="footer-right" data-fly>© 2026 all rights reserved</span>
+            </div>
+
+        </section>
+
+        <section id="projects" class="projects-section snap-child">
+
+            <div class="projects-left">
+                <div class="text-col h-margin" id="text-col">
+
+                    <div class="separator" aria-hidden="true">
+                        <span>*</span><span>*</span><span>*</span>
+                    </div>
+
+                    <nav class="projects-list" id="projects-list">
+                    </nav>
+
+                    <div class="group-meta" id="group-meta">
+                        <div class="separator" aria-hidden="true">
+                            <span>*</span><span>*</span><span>*</span>
+                        </div>
+
+                        <div class="projects-meta" id="projects-meta">
+                        </div>
+
+                        <!--<div class="separator" aria-hidden="true">
+                            <span>*</span><span>*</span><span>*</span>
+                        </div>-->
+                    </div>
+
+                    <div class="text-col-footer">
+                        <a href="#top-section" class="footer-left hover-swap">
+                            <span class="swap-original">Tommaso Boccaletti</span>
+                            <span class="swap-hover">to the bee</span>
+                        </a>
+                        <a href="about.html" class="footer-center">About me</a>
+                        <span class="footer-right">© 2026 all rights reserved</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="projects-right" id="projects-right">
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Feed progetti dedicato alla versione mobile: popolato da mobile.js,
+         invisibile su desktop (vedi mobile.css) -->
+    <div id="mobile-projects-feed"></div>
+
+    <div id="lightbox-header" class="lightbox-header">
+        <span id="lb-title"></span>
+    </div>
+    <button id="lightbox-close" class="lightbox-close" aria-label="Chiudi galleria">&times;</button>
+
+    <!-- Lightbox per Mobile -->
+    <div id="m-lightbox" class="m-lightbox">
+        <div id="m-lightbox-header" class="m-lightbox-header"></div>
+        <button id="m-lightbox-close" class="m-lightbox-close" aria-label="Chiudi galleria">&times;</button>
+        <div id="m-lightbox-content" class="m-lightbox-content"></div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script type="module" src="mobile.js"></script>
+</body>
+
+</html>
