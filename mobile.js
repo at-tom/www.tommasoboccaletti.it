@@ -28,6 +28,11 @@ async function initMobileFeed() {
 
     feed.innerHTML = buildMobileFeedHtml(projects);
 
+    // Force horizontal scroll to start at the first photo (leftmost)
+    feed.querySelectorAll('.m-gallery-scroll').forEach((scrollContainer) => {
+        scrollContainer.scrollLeft = 0;
+    });
+
     setupArchiveToggle(feed);
     setupMobileNavLinks(feed);
     setupMobileVideoObserver(feed);
@@ -54,12 +59,12 @@ function buildMobileFeedHtml(projects) {
 
     let html = '';
 
-    html += main.map((p) => buildMobileProjectHtml(p, false)).join('');
+    html += main.map((p, idx) => buildMobileProjectHtml(p, false, idx)).join('');
 
     if (archived.length) {
         html += `<div class="m-archive-sep">${SEPARATOR_HTML}</div>`;
         html += `<button type="button" class="m-archive-toggle" id="m-archive-toggle">See project archive</button>`;
-        html += archived.map((p) => buildMobileProjectHtml(p, true)).join('');
+        html += archived.map((p, idx) => buildMobileProjectHtml(p, true, idx)).join('');
     }
 
     return html;
@@ -69,8 +74,9 @@ function formatMobileYear(label) {
     return String(label || '').replace(/\s*\/\s*/, '<br>/ ');
 }
 
-function buildMobileProjectHtml(p, isArchive = false) {
+function buildMobileProjectHtml(p, isArchive = false, index = 0) {
     const yearLabel = p.year || p.years || '';
+    const isFirst = !isArchive && index === 0;
     return `
     <section class="m-project${isArchive ? ' m-archive' : ''}" id="m-${p.id}">
         ${SEPARATOR_HTML}
@@ -81,7 +87,7 @@ function buildMobileProjectHtml(p, isArchive = false) {
         <div class="m-project-meta">
             ${buildMobileMetaHtml(p)}
         </div>
-        ${buildMobileGalleryHtml(p.gallery)}
+        ${buildMobileGalleryHtml(p.gallery, isFirst)}
     </section>`;
 }
 
@@ -132,12 +138,12 @@ function buildMobileMetaHtml(p) {
     return html;
 }
 
-function buildMobileGalleryHtml(gallery = []) {
+function buildMobileGalleryHtml(gallery = [], isFirst = false) {
     const items = [];
 
     gallery.forEach((row) => {
         (row.items || []).forEach((item) => {
-            const html = buildMobileGalleryItem(item);
+            const html = buildMobileGalleryItem(item, isFirst);
             if (html) items.push(html);
         });
     });
@@ -147,7 +153,7 @@ function buildMobileGalleryHtml(gallery = []) {
     return `<div class="m-gallery-scroll">${items.join('')}</div>`;
 }
 
-function buildMobileGalleryItem(item) {
+function buildMobileGalleryItem(item, isFirst = false) {
     if (!item || item.placeholder) return '';
 
     const path = item.video || item.image;
@@ -156,7 +162,9 @@ function buildMobileGalleryItem(item) {
     }
 
     if (item.image) {
-        return `<img class="m-g-media" data-src="${path}" src="${item.image}" alt="" loading="lazy" />`;
+        const loadingAttr = isFirst ? 'eager' : 'lazy';
+        const priorityAttr = isFirst ? ' fetchpriority="high"' : '';
+        return `<img class="m-g-media" data-src="${path}" src="${item.image}" alt="" loading="${loadingAttr}"${priorityAttr} />`;
     }
 
     return '';
