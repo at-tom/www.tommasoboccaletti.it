@@ -246,19 +246,20 @@ function initThreeJS() {
         if (!renderer || !camera) return;
         const currentWidth = window.innerWidth;
         const isMobile = window.innerWidth <= 900;
-        
-        // On mobile, ignore resize triggers caused by height changes (e.g. browser bar hiding)
-        if (isMobile && currentWidth === lastWidth) {
-            return;
-        }
+        const widthChanged = currentWidth !== lastWidth;
         lastWidth = currentWidth;
 
-        baseY = isAboutPage ? BEE_CONFIG.about.y : (isMobile ? BEE_CONFIG.mobile.y : BEE_CONFIG.desktop.y);
-        const scale = isAboutPage ? BEE_CONFIG.about.scale : (isMobile ? BEE_CONFIG.mobile.scale : BEE_CONFIG.desktop.scale);
-        if (beeModel) {
-            beeModel.scale.set(scale, scale, scale);
-            beeModel.position.set(baseX, baseY, 0);
+        // Only update model scaling and base positions if width actually changed (or on desktop)
+        if (!isMobile || widthChanged) {
+            baseY = isAboutPage ? BEE_CONFIG.about.y : (isMobile ? BEE_CONFIG.mobile.y : BEE_CONFIG.desktop.y);
+            const scale = isAboutPage ? BEE_CONFIG.about.scale : (isMobile ? BEE_CONFIG.mobile.scale : BEE_CONFIG.desktop.scale);
+            if (beeModel) {
+                beeModel.scale.set(scale, scale, scale);
+                beeModel.position.set(baseX, baseY, 0);
+            }
         }
+
+        // Always update camera aspect and renderer size to prevent stretching
         camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(

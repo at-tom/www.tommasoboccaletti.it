@@ -16,6 +16,8 @@
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <!-- Preload primary assets to avoid network waterfall on hard reload -->
+    <link rel="modulepreload" href="https://esm.sh/three@0.160.0" />
+    <link rel="modulepreload" href="https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js" />
     <link rel="preload" href="ASSETS/ape.glb" as="fetch" crossorigin="anonymous" />
     <link rel="preload" href="ASSETS/progetti/emergentissimi_0.webp" as="image" />
     <link rel="preload" href="ASSETS/progetti/emergentissimi_1.webp" as="image" />
@@ -84,9 +86,6 @@
                         <div class="projects-meta" id="projects-meta">
                         </div>
 
-                        <!--<div class="separator" aria-hidden="true">
-                            <span>*</span><span>*</span><span>*</span>
-                        </div>-->
                     </div>
 
                     <div class="text-col-footer">
@@ -107,8 +106,6 @@
 
     </div>
 
-    <!-- Feed progetti dedicato alla versione mobile: popolato da mobile.js,
-         invisibile su desktop (vedi mobile.css) -->
     <div id="mobile-projects-feed"></div>
 
     <div id="lightbox-header" class="lightbox-header">
@@ -116,7 +113,6 @@
     </div>
     <button id="lightbox-close" class="lightbox-close" aria-label="Chiudi galleria">&times;</button>
 
-    <!-- Lightbox per Mobile -->
     <div id="m-lightbox" class="m-lightbox">
         <div id="m-lightbox-header" class="m-lightbox-header"></div>
         <button id="m-lightbox-close" class="m-lightbox-close" aria-label="Chiudi galleria">&times;</button>
@@ -128,3 +124,9 @@
 </body>
 
 </html>
+
+<!--
+git add .
+git commit -m "Update homepage and about page"
+git push
+-->
