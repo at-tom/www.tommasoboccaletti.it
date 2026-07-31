@@ -141,8 +141,6 @@ function flyInElements() {
 
 let updateActiveByScroll;
 
-const bzzSound = new Audio('/ASSETS/bzz.mp3');
-bzzSound.volume = 0.5;
 let mouseClientX = -9999;
 let mouseClientY = -9999;
 let isNearBee = false;
@@ -338,8 +336,6 @@ function animateThreeJS() {
 
                 if (dist < PROXIMITY_RADIUS && !isNearBee) {
                     isNearBee = true;
-                    bzzSound.currentTime = 0;
-                    bzzSound.play().catch(() => { });
                     if (phase === 'landing') showBeeTooltip();
                 } else if (dist >= PROXIMITY_RADIUS && isNearBee) {
                     isNearBee = false;

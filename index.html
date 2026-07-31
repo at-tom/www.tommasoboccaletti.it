@@ -15,7 +15,8 @@
     <link rel="stylesheet" href="mobile.css" media="(max-width: 900px)" />
     <link rel="icon" type="image/png" href="/favicon.png">
 
-    <!-- Preload primary project images to load them immediately -->
+    <!-- Preload primary assets to avoid network waterfall on hard reload -->
+    <link rel="preload" href="ASSETS/ape.glb" as="fetch" crossorigin="anonymous" />
     <link rel="preload" href="ASSETS/progetti/emergentissimi_0.webp" as="image" />
     <link rel="preload" href="ASSETS/progetti/emergentissimi_1.webp" as="image" />
 </head>

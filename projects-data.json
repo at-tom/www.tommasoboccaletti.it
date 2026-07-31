@@ -114,6 +114,7 @@
     "about": "Iki is a product designed to support children's well-being. It is a companion that attaches to their backpack and monitors environmental quality in real time, tracking CO₂ and TVOC levels. Iki gives feedback and advice directly to the child while sending real-time data to parents through a dedicated app.",
     "project": "Iki is designed to keep parents and children connected, it even allows playing peekaboo together through the device.<br><br>Technically, Iki is built on the M5Stack Core2, powered by an ESP32 microcontroller, prototyped in C++, 3D printed, and made interactive with Protopie.",
     "team": "Stella Facconi, Doga Su Yildirim",
+    "links": "<a href=\"https://github.com/at-tom/Iki---H-S2025-206-Group-4-.git\" target=\"_blank\">here</a> all of Iki's codes",
     "archive": false,
     "gallery": [
       {
