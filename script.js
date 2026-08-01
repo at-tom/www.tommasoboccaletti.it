@@ -48,13 +48,20 @@ const hasVisited = !isReload && (sessionStorage.getItem('visited_index') === 'tr
 
 let beeLoaded = false;
 let imagesLoaded = false;
-let minLoadingTimeElapsed = false;
 
-// Preload the first three Emergentissimi images programmatically to wait for them
+// Must match the .loading-zzz span animation-duration in style.css
+// (@keyframes zzzLetter). The loader is only allowed to disappear on a
+// multiple of this duration, so the "Bzzz" animation always finishes a
+// full loop — and keeps looping for as long as the bee/photos aren't ready.
+const BZZZ_CYCLE_MS = 1600;
+const loadStartTime = performance.now();
+let revealScheduled = false;
+
+// Preload the first two Emergentissimi images (matching the <link
+// rel="preload"> tags in index.html) so the loader waits for them too.
 const preloadImages = [
     'ASSETS/progetti/emergentissimi_0.webp',
-    'ASSETS/progetti/emergentissimi_1.webp',
-    'ASSETS/progetti/emergentissimi_2.webp'
+    'ASSETS/progetti/emergentissimi_1.webp'
 ];
 let loadedCount = 0;
 preloadImages.forEach(src => {
@@ -78,14 +85,19 @@ preloadImages.forEach(src => {
 });
 
 function tryRevealSite() {
-    if (beeLoaded && imagesLoaded && minLoadingTimeElapsed) revealSite();
-}
+    if (!(beeLoaded && imagesLoaded) || revealScheduled) return;
+    revealScheduled = true;
 
-// Bzzz initial loader minimum time
-setTimeout(() => {
-    minLoadingTimeElapsed = true;
-    tryRevealSite();
-}, 2000); // 2 seconds minimum Bzzz duration
+    const elapsed = performance.now() - loadStartTime;
+    const cyclesElapsed = Math.max(1, Math.ceil(elapsed / BZZZ_CYCLE_MS));
+    const remaining = (cyclesElapsed * BZZZ_CYCLE_MS) - elapsed;
+
+    if (remaining > 0) {
+        setTimeout(revealSite, remaining);
+    } else {
+        revealSite();
+    }
+}
 
 function revealSite() {
     const loadingScreen = document.getElementById('loading-screen');
@@ -196,7 +208,24 @@ function initThreeJS() {
     const loader = new GLTFLoader();
     loader.crossOrigin = 'anonymous';
 
-    loader.load('ASSETS/ape.glb', (glb) => {
+    loadBeeModel(loader);
+
+    function loadBeeModel(loader, attempt = 1) {
+        const MAX_ATTEMPTS = 3;
+        loader.load('ASSETS/ape.glb', onBeeLoaded, undefined, (err) => {
+            if (attempt < MAX_ATTEMPTS) {
+                // Transient network hiccup: retry with a short backoff
+                // instead of giving up and never showing the bee.
+                setTimeout(() => loadBeeModel(loader, attempt + 1), 400 * attempt);
+            } else {
+                console.warn('Bee model failed to load after retries:', err);
+                beeLoaded = true;
+                tryRevealSite();
+            }
+        });
+    }
+
+    function onBeeLoaded(glb) {
         beeModel = glb.scene;
 
         const box = new THREE.Box3().setFromObject(beeModel);
@@ -229,10 +258,7 @@ function initThreeJS() {
 
         beeLoaded = true;
         tryRevealSite();
-    }, undefined, () => {
-        beeLoaded = true;
-        tryRevealSite();
-    });
+    }
 
     window.addEventListener('mousemove', (e) => {
         mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -242,12 +268,21 @@ function initThreeJS() {
     });
 
     let lastWidth = window.innerWidth;
+    let lastHeight = window.innerHeight;
     window.addEventListener('resize', () => {
         if (!renderer || !camera) return;
         const currentWidth = window.innerWidth;
+        const currentHeight = window.innerHeight;
         const isMobile = window.innerWidth <= 900;
         const widthChanged = currentWidth !== lastWidth;
+        const heightChanged = currentHeight !== lastHeight;
         lastWidth = currentWidth;
+        lastHeight = currentHeight;
+
+        // On mobile, a height-only change is almost always just the browser
+        // toolbar showing/hiding on scroll, not a real layout change — skip
+        // it entirely so the bee never rescales/repositions because of it.
+        if (isMobile && !widthChanged && heightChanged) return;
 
         // Only update model scaling and base positions if width actually changed (or on desktop)
         if (!isMobile || widthChanged) {
@@ -268,6 +303,22 @@ function initThreeJS() {
             false
         );
     });
+
+    // Pause the render loop entirely when the bee canvas is scrolled out of
+    // view (e.g. scrolled down to the projects feed on mobile) and resume it
+    // when it comes back — saves battery/CPU without affecting how/when the
+    // bee visually appears.
+    const visibilityObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                if (!rafId) rafId = requestAnimationFrame(animateThreeJS);
+            } else if (rafId && flyAwayStart === null) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+        });
+    }, { threshold: 0.01 });
+    visibilityObserver.observe(canvasContainer);
 }
 
 function animateThreeJS() {

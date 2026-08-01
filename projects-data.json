@@ -1,12 +1,12 @@
 [
   {
     "id": "p0",
-    "title": "Emergentissimi",
+    "title": "Emergentissimi Music Festival",
     "year": "2023 / ongoing",
     "years": "2023 — ongoing",
     "type": "Music Festival,Event Design",
     "about": "Co-founded in Milan in 2023, Emergentissimi is a music festival dedicated to cultivating the professional trajectories of emerging artists through enhanced visibility and strategic support.",
-    "project": "Collaborating with a team of young designers, we engineered a comprehensive visual identity spanning digital and physical channels, managing content production and social strategy to ensure rigorous brand coherence.<br><br>Now approaching its third anniversary with over twenty iterations primarily hosted at BASE Milano, the platform has expanded to include partnerships with Volvo Studio Milano and specialized formats such as the Pride-themed FROC*SSIMI, the songwriting showcase Parole Parole Parole! and exclusive release parties.",
+    "project": "Developed alongside a team of young designers, the project required the creation of a comprehensive visual identity spanning both digital and physical channels. The scope of work encompassed content production and social media strategy, ensuring rigorous brand coherence across all touchpoints.<br><br>Beyond the main Emergentissimi Festival, which surpassed its fifth edition in 2026, the platform has significantly expanded its scope through specialized formats.<br><br>The ecosystem now includes ‘Parole Parole Parole!’ an event dedicated to music and poetry, and the queer festival ‘Froc*ssimi’. Furthermore, the initiative has broadened its reach through active collaborations with other musical entities as well as events hosted with the calibre of Volvo.",
     "team": "Olivia Missale, Giorgia Fontana, Alice de Francesco, Marco Fasano",
     "archive": false,
     "gallery": [
@@ -14,7 +14,8 @@
         "row": "row-solo-full",
         "items": [
           {
-            "image": "ASSETS/progetti/emergentissimi_0.webp"
+            "image": "ASSETS/progetti/emergentissimi_0.webp",
+            "caption": "click here to expand the gallery"
           }
         ]
       },
@@ -65,11 +66,16 @@
         ]
       },
       {
-        "row": "row-doppia",
+        "row": "row-solo",
         "items": [
           {
             "image": "ASSETS/progetti/emergentissimi_5.webp"
-          },
+          }
+        ]
+      },
+      {
+        "row": "row-solo",
+        "items": [
           {
             "image": "ASSETS/progetti/emergentissimi_6.webp"
           }
@@ -536,9 +542,9 @@
     "title": "Sneic Milano",
     "year": "2024 / 2025",
     "years": "2024 — 2025",
-    "type": "Speculative Design",
+    "type": "Speculative Design & Prototyping",
     "about": "Sneic is a speculative design project that imagines the existence of a secret reptilian office-core society tasked with generating suffering in the world through carefully orchestrated events carried out by Sneic agents, well-known VIPs and politicians. The project explores themes of power, media manipulation, and the construction of distorted institutional visual systems.",
-    "project": "At the core of the project is an interactive communication prototype called GeCO, the Generator of Organized Chaos. Within this context, I focused on designing the user experience of the machine, developing its physical functionality using Arduino and programming languages such as C++ and Python. I also worked on 3D modeling and created the digital and interactive interface of the machine using TouchDesigner and the Arduino's data.<br><br>The group's undergraduate thesis was based on this project.",
+    "project": "At the core of the project is an interactive communication prototype called GeCO, the Generator of Organized Chaos. Within this context, I focused on designing the user experience of the machine, developing its physical functionality using Arduino and programming languages such as C++ and Python. I also worked on 3D modeling and created the digital and interactive interface of the machine using TouchDesigner and the Arduino's data.",
     "team": "Elia Caccia, Giorgia Fontana, Alessia Piscioli, Renata Romagnuolo, Alice Torzoni",
     "links": "The project was the basis of the <a href=\"ASSETS/progetti/SNEIC_Thesis.pdf\" target=\"_blank\">undergraduate thesis</a> of the group members",
     "archive": false,
@@ -906,7 +912,7 @@
     "title": "Productive: a Bending Spoons design sprint",
     "year": "2026",
     "years": "2026",
-    "type": "App Redesign, UX/UI Design",
+    "type": "App Redesign, UX&UI Design",
     "about": "Productive: a Bending Spoons design sprint is a rapid app redesign project developed during an intensive 24-hour design sprint hosted at the Bending Spoons headquarters. Driven by a comprehensive analysis of user data, combined with qualitative and quantitative insights and design know-how, the project aimed to completely rethink the user experience of the habit-tracking application.",
     "project": "The workflow progressed from detailed wireframing to a complete high-fidelity prototype, introducing a radically new visual style. At its core, the conceptual redesign heavily emphasizes social interaction to drive user engagement, aiming to motivate positive behavioral change through a newly structured and highly immersive challenge system.",
     "links": "<a href=\"ASSETS/progetti/PRODUCTIVE_wireframe.png\" target=\"_blank\">here</a> the complete wireframe with rationales",

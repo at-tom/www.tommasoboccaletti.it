@@ -28,10 +28,7 @@ async function initMobileFeed() {
 
     feed.innerHTML = buildMobileFeedHtml(projects);
 
-    // Force horizontal scroll to start at the first photo (leftmost)
-    feed.querySelectorAll('.m-gallery-scroll').forEach((scrollContainer) => {
-        scrollContainer.scrollLeft = 0;
-    });
+    resetGalleryScrollPositions(feed);
 
     setupArchiveToggle(feed);
     setupMobileNavLinks(feed);
@@ -49,6 +46,45 @@ async function initMobileFeed() {
             }
         }, { passive: true });
     }
+}
+
+function resetGalleryScrollPositions(feed) {
+    const galleries = feed.querySelectorAll('.m-gallery-scroll');
+    if (!galleries.length) return;
+
+    const forceZero = () => {
+        galleries.forEach((scrollContainer) => {
+            scrollContainer.scrollLeft = 0;
+        });
+    };
+
+    // Immediately, then after layout settles, then once every image/video
+    // in the feed has finished loading (late loads can otherwise nudge
+    // scrollLeft on some browsers).
+    forceZero();
+    requestAnimationFrame(() => requestAnimationFrame(forceZero));
+
+    const mediaEls = feed.querySelectorAll('img.m-g-media, video.m-g-media');
+    let pending = mediaEls.length;
+    if (!pending) return;
+
+    const onOneLoaded = () => {
+        pending--;
+        if (pending <= 0) forceZero();
+    };
+
+    mediaEls.forEach((el) => {
+        const isLoaded = el.tagName === 'IMG'
+            ? el.complete
+            : el.readyState >= 1;
+        if (isLoaded) {
+            onOneLoaded();
+        } else {
+            const evt = el.tagName === 'IMG' ? 'load' : 'loadedmetadata';
+            el.addEventListener(evt, onOneLoaded, { once: true });
+            el.addEventListener('error', onOneLoaded, { once: true });
+        }
+    });
 }
 
 const SEPARATOR_HTML = `<div class="separator" aria-hidden="true"><span>*</span><span>*</span><span>*</span></div>`;
@@ -269,6 +305,7 @@ function setupMobileLightbox(feed, projects) {
     });
 
     // Function to update header title based on which item is currently centered
+    let lastCenteredItem = null;
     const updateHeaderOnScroll = () => {
         const items = content.querySelectorAll('.m-lightbox-item');
         const centerY = window.innerHeight / 2;
@@ -287,6 +324,7 @@ function setupMobileLightbox(feed, projects) {
 
         if (closestItem) {
             header.textContent = closestItem.getAttribute('data-project-title') || '';
+            lastCenteredItem = closestItem;
         }
     };
 
@@ -312,16 +350,31 @@ function setupMobileLightbox(feed, projects) {
             targetElement.scrollIntoView({ block: 'center' });
             // Instantly update header to avoid lag
             header.textContent = targetElement.getAttribute('data-project-title') || '';
+            lastCenteredItem = targetElement;
         }
     });
 
-    // 4. Close handler
+    // 4. Close handler — return to the exact photo/project being viewed
+    // in the extended gallery, matching the lightbox's vertical scroll
+    // position to the feed's horizontal scroll position, instead of
+    // always snapping back to the top (the bee).
     const close = () => {
+        const targetSrc = lastCenteredItem ? lastCenteredItem.getAttribute('data-src') : null;
+
         document.body.classList.remove('m-lightbox-open');
         lightbox.classList.remove('active');
         header.textContent = '';
         // Pause all lightbox videos
         content.querySelectorAll('video').forEach(v => v.pause());
+
+        if (targetSrc) {
+            const thumb = feed.querySelector(`.m-g-media[data-src="${CSS.escape(targetSrc)}"]`);
+            if (thumb) {
+                const project = thumb.closest('.m-project');
+                if (project) project.scrollIntoView({ block: 'start' });
+                thumb.scrollIntoView({ block: 'nearest', inline: 'start' });
+            }
+        }
     };
 
     closeBtn.addEventListener('click', close);

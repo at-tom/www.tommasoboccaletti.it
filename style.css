@@ -93,7 +93,9 @@ body.has-caption .cursor-caption {
 .loading-zzz span {
     opacity: 0;
     display: inline-block;
-    animation: zzzLetter 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    /* Full cycle = 1.6s. Kept in sync with BZZZ_CYCLE_MS in script.js so
+       the loader always finishes a complete loop before disappearing. */
+    animation: zzzLetter 1.6s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
 }
 
 @keyframes zzzLetter {
@@ -102,13 +104,19 @@ body.has-caption .cursor-caption {
         transform: translateY(10px) rotate(-22deg);
     }
 
-    60% {
+    25% {
         opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
     }
 
     100% {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+        transform: translateY(-8px) rotate(14deg);
     }
 }
 
@@ -1051,7 +1059,7 @@ body.page-about {
     text-align-last: center;
     font-size: var(--text-size);
     font-weight: var(--text-weight);
-    line-height: 1.45;
+    line-height: 1.4;
     letter-spacing: var(--text-tracking);
     width: 100%;
 }
@@ -1089,7 +1097,7 @@ body.page-about {
 .contacts-centered .about-text.contacts {
     text-align: center;
     width: 100%;
-    line-height: 1.45;
+    line-height: 1.4;
 }
 
 .pdf-link {
@@ -1159,7 +1167,10 @@ body.page-about {
 
     .top-section {
         height: 100vh;
-        height: 100dvh;
+        /* svh (small viewport height) stays constant regardless of the
+           mobile browser toolbar showing/hiding on scroll — unlike dvh,
+           which changes and was causing the bee canvas to rescale. */
+        height: 100svh;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
