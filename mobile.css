@@ -223,6 +223,7 @@
         font-size: var(--text-size);
         font-weight: var(--text-weight);
         letter-spacing: var(--text-tracking);
+        color: inherit;
         opacity: 0.55;
     }
 
