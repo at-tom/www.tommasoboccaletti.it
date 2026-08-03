@@ -35,6 +35,38 @@ async function initMobileFeed() {
     setupMobileVideoObserver(feed);
     setupMobileLightbox(feed, projects);
 
+    function checkHashAndNavigateMobile() {
+        const hash = window.location.hash.toLowerCase().trim().substring(1);
+        if (!hash) return;
+
+        let targetProject = null;
+        projects.forEach((p) => {
+            const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            if (p.id.toLowerCase() === hash || slug === hash) {
+                targetProject = p;
+            }
+        });
+
+        if (targetProject) {
+            if (targetProject.archive) {
+                const toggleBtn = feed.querySelector('#m-archive-toggle');
+                if (toggleBtn && !toggleBtn.classList.contains('m-open')) {
+                    toggleBtn.click();
+                }
+            }
+
+            setTimeout(() => {
+                const mBlock = document.getElementById(`m-${targetProject.id}`);
+                if (mBlock) {
+                    mBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 300);
+        }
+    }
+
+    checkHashAndNavigateMobile();
+    window.addEventListener('hashchange', checkHashAndNavigateMobile);
+
     // Hide scroll hint when scrolling down on mobile
     const scrollHint = document.querySelector('.landing-footer .hint-scroll');
     if (scrollHint) {

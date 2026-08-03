@@ -980,8 +980,68 @@ function initProjectsUI() {
         setActive(activeIndex);
     }
 
+    function checkHashAndNavigate() {
+        const hash = window.location.hash.toLowerCase().trim().substring(1);
+        if (!hash) return;
+
+        let targetIndex = -1;
+        let targetBlock = null;
+
+        projectBlocks.forEach((block, idx) => {
+            const id = block.id.toLowerCase();
+            const title = block.getAttribute('data-title') || '';
+            const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            if (id === hash || slug === hash) {
+                targetIndex = idx;
+                targetBlock = block;
+            }
+        });
+
+        if (targetBlock && targetIndex !== -1) {
+            const isArchive = targetBlock.classList.contains('archive-item');
+            if (isArchive && archiveToggle && !archiveOpen) {
+                archiveToggle.click();
+            }
+
+            if (window.innerWidth > 900) {
+                goToProjects();
+                setActive(targetIndex);
+                setTimeout(() => {
+                    const topPos = targetBlock.offsetTop;
+                    photoScrollTarget = topPos;
+                    if (projectsRight) {
+                        projectsRight.scrollTop = topPos;
+                    }
+                }, 100);
+            } else {
+                goToProjects();
+                setActive(targetIndex);
+                setTimeout(() => {
+                    targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+    }
+
     if (projectBlocks.length) {
-        setActive(0);
+        const hash = window.location.hash.toLowerCase().trim().substring(1);
+        let hasValidHash = false;
+        if (hash) {
+            projectBlocks.forEach((block) => {
+                const id = block.id.toLowerCase();
+                const title = block.getAttribute('data-title') || '';
+                const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                if (id === hash || slug === hash) {
+                    hasValidHash = true;
+                }
+            });
+        }
+
+        if (!hasValidHash) {
+            setActive(0);
+        } else {
+            checkHashAndNavigate();
+        }
 
         listRows.forEach((row) => {
             row.addEventListener('click', () => {
@@ -1008,6 +1068,8 @@ function initProjectsUI() {
                 });
             }
         });
+
+        window.addEventListener('hashchange', checkHashAndNavigate);
     }
 }
 
