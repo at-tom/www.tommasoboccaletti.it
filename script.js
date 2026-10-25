@@ -1414,12 +1414,15 @@ function iconText(el, prefix, n) {
 
 function renderMax() {
     if (!maxScoreEl) return;
-    if (maxScore > 0) {
+    if (lbOpen) {
+        maxScoreEl.textContent = 'close top 10';
+        maxScoreEl.classList.add('visible');
+    } else if (maxScore > 0) {
         iconText(maxScoreEl, 'max score:', maxScore);
         maxScoreEl.classList.add('visible');
     } else {
-        maxScoreEl.classList.remove('visible');
-        maxScoreEl.textContent = '';
+        maxScoreEl.textContent = 'top 10';
+        maxScoreEl.classList.add('visible');
     }
 }
 
@@ -1661,8 +1664,80 @@ async function fetchTop() {
     }
 }
 
+let lbPos = null;
+
+function makeDraggable(panel, handle) {
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let initialLeft = 0;
+    let initialTop = 0;
+
+    handle.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('button, input, a, form')) return;
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+
+        const rect = panel.getBoundingClientRect();
+        initialLeft = rect.left;
+        initialTop = rect.top;
+
+        panel.style.left = `${initialLeft}px`;
+        panel.style.top = `${initialTop}px`;
+        panel.style.bottom = 'auto';
+        panel.style.right = 'auto';
+
+        panel.classList.add('is-dragging');
+        try {
+            handle.setPointerCapture(e.pointerId);
+        } catch (_) {}
+
+        e.preventDefault();
+    });
+
+    handle.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+
+        let newLeft = initialLeft + dx;
+        let newTop = initialTop + dy;
+
+        const pad = 10;
+        const maxLeft = Math.max(pad, window.innerWidth - panel.offsetWidth - pad);
+        const maxTop = Math.max(pad, window.innerHeight - panel.offsetHeight - pad);
+
+        newLeft = Math.max(pad, Math.min(newLeft, maxLeft));
+        newTop = Math.max(pad, Math.min(newTop, maxTop));
+
+        panel.style.left = `${newLeft}px`;
+        panel.style.top = `${newTop}px`;
+        lbPos = { x: newLeft, y: newTop };
+    });
+
+    const stopDrag = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        panel.classList.remove('is-dragging');
+        try {
+            handle.releasePointerCapture(e.pointerId);
+        } catch (_) {}
+    };
+
+    handle.addEventListener('pointerup', stopDrag);
+    handle.addEventListener('pointercancel', stopDrag);
+}
+
 async function openLeaderboard(score = 0, token = null) {
     if (lbLoading || gameState !== 'idle') return;
+    if (lbOpen && score === 0) {
+        closeLeaderboard();
+        return;
+    }
     lbLoading = true;
     const data = await fetchTop();
     lbLoading = false;
@@ -1685,7 +1760,14 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
         lbEl = document.createElement('div');
         lbEl.className = 'lb';
         lbEl.setAttribute('role', 'dialog');
-        lbEl.setAttribute('aria-label', 'top 10');
+        lbEl.setAttribute('aria-label', 'top 10 leaderboard');
+        if (lbPos) {
+            lbEl.style.left = `${lbPos.x}px`;
+            lbEl.style.top = `${lbPos.y}px`;
+            lbEl.style.bottom = 'auto';
+            lbEl.style.right = 'auto';
+        }
+        lbEl.addEventListener('pointerdown', (e) => e.stopPropagation());
         gameUi.appendChild(lbEl);
         const el = lbEl;
         requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
@@ -1694,19 +1776,37 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
     lbEntry = slot >= 0;
     hideBeeTooltip();
     topSection.classList.add('lb-on');
+    renderMax();
 
     const el = lbEl;
     el.textContent = '';
 
     const head = document.createElement('div');
     head.className = 'lb-head';
+
+    const titleWrap = document.createElement('div');
+    titleWrap.className = 'lb-title-wrap';
+
+    const handleIcon = document.createElement('span');
+    handleIcon.className = 'lb-drag-handle';
+    handleIcon.setAttribute('aria-hidden', 'true');
+    handleIcon.textContent = '⠿';
+    handleIcon.title = 'Trascina per spostare';
+
     const title = document.createElement('span');
+    title.className = 'lb-title';
     title.textContent = 'top 10';
+
+    titleWrap.append(handleIcon, title);
+
     const x = document.createElement('button');
     x.type = 'button';
     x.className = 'lb-x';
-    x.textContent = slot >= 0 ? 'skip' : 'close';
-    head.append(title, x);
+    x.textContent = slot >= 0 ? 'skip' : '✕';
+    x.setAttribute('aria-label', slot >= 0 ? 'Salta inserimento' : 'Chiudi classifica');
+    head.append(titleWrap, x);
+
+    makeDraggable(el, head);
 
     const list = document.createElement('ol');
     list.className = 'lb-list';
@@ -1728,6 +1828,11 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
         const sc = document.createElement('span');
         sc.className = 'lb-s';
 
+        const flower = new Image();
+        flower.src = 'ASSETS/flower1.svg';
+        flower.className = 'bee-score-icon';
+        flower.alt = '';
+
         if (r.entry) {
             form = document.createElement('form');
             form.className = 'lb-form';
@@ -1739,13 +1844,14 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
             input.autocomplete = 'off';
             input.autocapitalize = 'characters';
             input.spellcheck = false;
-            input.setAttribute('aria-label', 'your name, 3 letters');
+            input.placeholder = 'AAA';
+            input.setAttribute('aria-label', 'your initials, 3 letters');
             form.appendChild(input);
             nm.appendChild(form);
-            sc.textContent = String(score);
+            sc.append(flower, ' ' + score);
         } else {
             nm.textContent = r.n;
-            sc.textContent = String(r.s);
+            sc.append(flower, ' ' + r.s);
         }
         li.append(rk, nm, sc);
         list.appendChild(li);
@@ -1760,7 +1866,8 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
 
     el.append(head, list);
 
-    x.addEventListener('click', () => {
+    x.addEventListener('click', (e) => {
+        e.stopPropagation();
         if (form && x.textContent === 'save') form.requestSubmit();
         else closeLeaderboard();
     });
@@ -1805,13 +1912,14 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
 
 function closeLeaderboard() {
     if (topSection) topSection.classList.remove('lb-on');
-    if (!lbEl) { lbOpen = false; lbEntry = false; return; }
-    const el = lbEl;
-    lbEl = null;
     lbOpen = false;
     lbEntry = false;
+    renderMax();
+    if (!lbEl) { isNearBee = false; return; }
+    const el = lbEl;
+    lbEl = null;
     el.classList.remove('show');
-    setTimeout(() => el.remove(), 450);
+    setTimeout(() => el.remove(), 400);
     isNearBee = false;
 }
 
@@ -1824,9 +1932,14 @@ if (topSection && landing && gameUi) {
     renderMax();
 
     if (maxScoreEl) {
-        maxScoreEl.addEventListener('click', () => {
-            if (gameState !== 'idle' || lbOpen) return;
-            openLeaderboard(0, null);
+        maxScoreEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (gameState !== 'idle') return;
+            if (lbOpen) {
+                closeLeaderboard();
+            } else {
+                openLeaderboard(0, null);
+            }
         });
     }
 
