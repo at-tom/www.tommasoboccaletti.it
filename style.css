@@ -1061,8 +1061,7 @@ body.lightbox-open .lightbox-header {
     text-decoration: underline;
 }
 
-/* while hovering the bee or playing, the max score steps aside */
-.top-section.is-hover .game-max,
+/* while playing, the max score steps aside */
 .top-section.game-on .game-max {
     opacity: 0 !important;
     filter: blur(4px);
