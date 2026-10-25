@@ -24,9 +24,34 @@ const TOKEN_MAX_AGE_S = 600;
 const KEY = 'bee:lb';
 const KEEP = 100;               // quante righe tenere in Redis (se ne mostrano 10)
 
-const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-const REDIS_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-const SECRET = process.env.SCORE_SECRET || REDIS_TOKEN;
+function findEnv(suffixes, exclude = '') {
+  for (const s of suffixes) {
+    if (process.env[s]) return process.env[s];
+  }
+  const keys = Object.keys(process.env);
+  for (const s of suffixes) {
+    const match = keys.find(
+      (k) => (k === s || k.endsWith(`_${s}`)) && (!exclude || !k.includes(exclude))
+    );
+    if (match && process.env[match]) return process.env[match];
+  }
+  return null;
+}
+
+const REDIS_URL = (
+  process.env.leaderboard_KV_REST_API_URL ||
+  findEnv(['KV_REST_API_URL', 'UPSTASH_REDIS_REST_URL', 'REDIS_REST_URL']) || ''
+).replace(/\/+$/, '');
+
+const REDIS_TOKEN =
+  process.env.leaderboard_KV_REST_API_TOKEN ||
+  findEnv(
+    ['KV_REST_API_TOKEN', 'UPSTASH_REDIS_REST_TOKEN', 'REDIS_REST_TOKEN'],
+    'READ_ONLY'
+  );
+
+const SECRET = process.env.SCORE_SECRET || REDIS_TOKEN || 'bee-score-secret';
+
 
 const BLOCKED = new Set([
   'ASS', 'SEX', 'FAG', 'KKK', 'NZI', 'CUM', 'TIT', 'FUC', 'DIO', 'CZZ', 'CUL', 'SSO', 'NIG', 'HIV', 'WTF'
