@@ -41,13 +41,32 @@
         top: 66vh;
         transform: translateX(-50%);
         opacity: 0.6;
-        animation: mHintPulse 6s ease-in-out infinite;
+        animation: mHintPulse 6s ease-in-out infinite, mHintBob 2.2s ease-in-out infinite;
         white-space: nowrap;
     }
 
+    @keyframes mHintBob {
+
+        0%,
+        100% {
+            transform: translateX(-50%) translateY(3px);
+        }
+
+        50% {
+            transform: translateX(-50%) translateY(-3px);
+        }
+    }
+
     @keyframes mHintPulse {
-        0%, 100% { opacity: 0.6; }
-        50% { opacity: 0.2; }
+
+        0%,
+        100% {
+            opacity: 0.6;
+        }
+
+        50% {
+            opacity: 0.2;
+        }
     }
 
     .landing-footer .hint-feed,
@@ -240,7 +259,8 @@
         z-index: 10000;
         background-color: var(--bg-color);
         overflow-y: auto;
-        overflow-x: hidden; /* Prevent horizontal swiping */
+        overflow-x: hidden;
+        /* Prevent horizontal swiping */
         -webkit-overflow-scrolling: touch;
         display: none;
         flex-direction: column;
@@ -257,7 +277,8 @@
         top: 15px;
         left: 50%;
         transform: translateX(-50%);
-        width: calc(100% - 110px); /* Leave equal space on both sides (close button on right, balance on left) */
+        width: calc(100% - 110px);
+        /* Leave equal space on both sides (close button on right, balance on left) */
         height: 40px;
         display: flex;
         align-items: center;
@@ -306,10 +327,12 @@
         height: auto;
         display: block;
         object-fit: cover;
-        margin: 0 0 -1px 0; /* Overlap vertically by 1px */
+        margin: 0 0 -1px 0;
+        /* Overlap vertically by 1px */
         padding: 0;
         border: none;
-        transform: scale(1.005); /* Overlap horizontally to prevent viewport bleed */
+        transform: scale(1.005);
+        /* Overlap horizontally to prevent viewport bleed */
     }
 
     body.m-lightbox-open {

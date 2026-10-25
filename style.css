@@ -327,37 +327,71 @@ a {
 
 .landing-footer .hint-scroll {
     display: inline-block;
+}
+
+/* scroll hint: gentle up/down float */
+.landing-footer .hint-bob {
+    display: inline-block;
+    animation: hintBob 2.8s ease-in-out infinite;
+}
+
+@keyframes hintBob {
+    0%, 100% { transform: translateY(2px); }
+    50%      { transform: translateY(-3px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-footer .hint-bob { animation: none; }
+}
+
+/* ---- bee hover: every landing text is swapped for the hint (old text blurs underneath) ---- */
+.sw {
+    position: relative;
+    display: inline-block;
+}
+
+.sw-base {
+    display: inline-block;
     transition: opacity 0.4s ease, filter 0.4s ease;
 }
 
-.landing-footer .hint-feed {
+.sw-over {
     position: absolute;
-    left: 50%;
-    bottom: 110%;
-    transform: translateX(-50%) translateY(5px);
+    top: 0;
+    white-space: nowrap;
     opacity: 0;
     filter: blur(4px);
+    transform: translateY(5px);
     pointer-events: none;
     transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
-    white-space: nowrap;
 }
 
-.landing-footer .footer-center.bee-hovered .hint-scroll {
+.sw-over[data-a="l"] { left: 0; }
+.sw-over[data-a="r"] { right: 0; }
+.sw-over[data-a="c"] { left: 50%; margin-left: 0; transform: translate(-50%, 5px); }
+
+.site-header a:hover .sw-base {
+    text-decoration: underline;
+}
+
+.top-section.is-hover .sw-base,
+.top-section.is-hover .landing-footer .hint-scroll {
     opacity: 0.45;
     filter: blur(3px);
 }
 
-.landing-footer .footer-center.bee-hovered .hint-feed {
-    opacity: 1;
-    filter: blur(0);
-    transform: translateX(-50%) translateY(0);
+.landing-footer .hint-scroll {
+    transition: opacity 0.4s ease, filter 0.4s ease;
 }
 
-/* bee-score: same slot as hint-feed, hidden when tooltip is showing */
-.landing-footer .footer-center.bee-hovered .bee-score {
-    opacity: 0 !important;
-    transform: translateX(-50%) translateY(-8px) !important;
-    pointer-events: none;
+.top-section.is-hover .sw-over {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+}
+
+.top-section.is-hover .sw-over[data-a="c"] {
+    transform: translate(-50%, 0);
 }
 
 .projects-section {
@@ -960,28 +994,241 @@ body.lightbox-open .lightbox-header {
     animation: particleBurst 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-/* Score pill — same slot as hint-feed, only shown when NOT bee-hovered */
-.bee-score {
-    position: absolute;
-    left: 50%;
-    bottom: 110%;
-    transform: translateX(-50%) translateY(-8px);
-    opacity: 0;
-    pointer-events: none;
-    font-size: 9pt;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+/* =========================================
+   MINIGAME UI  (same type style as the rest of the site)
+   ========================================= */
+.top-section {
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-.bee-score.visible {
-    opacity: 0.8;
+.landing {
+    touch-action: manipulation;
+}
+
+.game-ui {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    font-size: var(--text-size);
+    font-weight: var(--text-weight);
+    letter-spacing: var(--text-tracking);
+}
+
+.game-line {
+    position: absolute;
+    left: 50%;
+    white-space: nowrap;
+    text-align: center;
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateX(-50%) translateY(5px);
+    transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+    font: inherit;
+    color: #000;
+    background: none;
+    border: 0;
+    padding: 0;
+    line-height: 1.35;
+}
+
+/* bottom line = the slot of the footer-centre text */
+.game-msg {
+    bottom: var(--side-margin);
+}
+
+/* line above it = max score / live score */
+.game-slot {
+    bottom: calc(var(--side-margin) + 1.9em);
+}
+
+.game-line.show,
+.top-section.is-hover #hover-msg,
+.game-max.visible {
+    opacity: 1;
+    filter: blur(0);
     transform: translateX(-50%) translateY(0);
 }
 
-/* Hint nudge animation — nudges the hint-feed text when visible */
-.landing-footer .hint-feed.hint-nudge {
-    animation: hintNudge 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+.game-max.visible {
+    opacity: 0.8;
+    pointer-events: auto;
+}
+
+.game-max.visible:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* while hovering the bee or playing, the max score steps aside */
+.top-section.is-hover .game-max,
+.top-section.lb-on .game-max,
+.top-section.game-on .game-max {
+    opacity: 0 !important;
+    filter: blur(4px);
+    pointer-events: none;
+}
+
+.game-timer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.game-timer.on {
+    opacity: 1;
+}
+
+.game-timer i {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    transform: scaleX(1);
+    transform-origin: 50% 50%;
+}
+
+.game-timer.run i {
+    transform: scaleX(0);
+    transition: transform var(--game-ms, 20000ms) linear;
+}
+
+.top-section.game-on .site-header,
+.top-section.game-on .landing-label,
+.top-section.game-on .landing-footer {
+    pointer-events: none;
+}
+
+/* ---- top 10 ---- */
+.lb {
+    position: absolute;
+    left: var(--side-margin);
+    bottom: calc(var(--side-margin) + 1.9em);
+    width: 13.5em;
+    pointer-events: auto;
+    line-height: 1.35;
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(6px);
+    transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
+}
+
+.lb.show {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+}
+
+.lb-head,
+.lb-list li {
+    display: grid;
+    grid-template-columns: 2.1em 1fr auto;
+    align-items: baseline;
+}
+
+.lb-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.45em;
+}
+
+.lb-x {
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    opacity: 0.5;
+}
+
+.lb-x:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.lb-list {
+    list-style: none;
+}
+
+.lb-list .lb-r {
+    opacity: 0.4;
+}
+
+.lb-list .lb-s {
+    text-align: right;
+}
+
+.lb-list li.lb-mine .lb-n {
+    text-decoration: underline;
+}
+
+.lb-empty {
+    opacity: 0.4;
+}
+
+.lb-form {
+    display: inline;
+}
+
+.lb-in {
+    font: inherit;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: inherit;
+    background: none;
+    border: 0;
+    border-bottom: 1px solid #000;
+    border-radius: 0;
+    outline: none;
+    width: 3.2em;
+    padding: 0;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.lb-in:disabled {
+    opacity: 0.5;
+}
+
+.lb-form.bad .lb-in {
+    animation: lbBad 0.3s ease;
+}
+
+@keyframes lbBad {
+    0%, 100% { transform: translateX(0); }
+    25%      { transform: translateX(-3px); }
+    75%      { transform: translateX(3px); }
+}
+
+/* =========================================
+   WHITE FLASH between landing <-> projects
+   ========================================= */
+.page-flash {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9000;
+}
+
+.page-flash.in {
+    opacity: 1;
+    transition: opacity 0.11s linear;
+}
+
+.page-flash.out {
+    opacity: 0;
+    transition: opacity 0.34s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.scroll-snap-wrapper.cut .snap-child {
+    transition: none !important;
 }
 
 /* Floaty +🌸 */

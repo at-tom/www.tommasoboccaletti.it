@@ -42,26 +42,35 @@
         <section class="top-section snap-child" id="top-section">
 
             <header class="site-header h-margin">
-                <a href="#top-section" class="header-left" data-fly>Portfolio of*</a>
-                <a href="#projects" class="header-center" data-fly>Projects</a>
-                <a href="about.html" class="header-right" data-fly>About me</a>
+                <a href="#top-section" class="header-left" data-fly data-swap="l">Portfolio of*</a>
+                <a href="#projects" class="header-center" data-fly data-swap="c">Projects</a>
+                <a href="about.html" class="header-right" data-fly data-swap="r">About me</a>
             </header>
 
             <div id="landing" class="landing">
                 <div id="canvas-container"></div>
 
-                <div class="landing-label label-visual h-margin" data-fly>Visual</div>
-                <div class="landing-label label-designer h-margin" data-fly>Designer</div>
+                <div class="landing-label label-visual h-margin" data-fly data-swap="l">Visual</div>
+                <div class="landing-label label-designer h-margin" data-fly data-swap="r">Designer</div>
             </div>
 
             <div class="landing-footer h-margin">
-                <span class="footer-left" data-fly>*Tommaso Boccaletti</span>
+                <span class="footer-left" data-fly data-swap="l">*Tommaso Boccaletti</span>
                 <span class="footer-center" data-fly>
-                    <span class="hint-scroll">scroll down to enter my world</span>
-                    <span class="hint-feed">double click to drop a flower for the bee</span>
-                    <span class="bee-score" id="bee-score" aria-hidden="true"></span>
+                    <span class="hint-scroll"><span class="hint-bob">scroll down to enter my world</span></span>
                 </span>
-                <span class="footer-right" data-fly>© 2026 all rights reserved</span>
+                <span class="footer-right" data-fly data-swap="r">© 2026 all rights reserved</span>
+            </div>
+
+            <!-- minigame UI: sits above the landing, never in the middle of the screen -->
+            <div class="game-ui" id="game-ui">
+                <div class="game-line game-msg" id="hover-msg" aria-hidden="true">double click to play with the bee
+                </div>
+                <div class="game-line game-msg" id="game-msg" role="status" aria-live="polite"></div>
+                <div class="game-line game-slot" id="game-live" aria-hidden="true"></div>
+                <button type="button" class="game-line game-slot game-max" id="bee-score"
+                    aria-label="max score, open top 10"></button>
+                <div class="game-timer" id="game-timer" aria-hidden="true"><i></i></div>
             </div>
 
         </section>
@@ -108,6 +117,8 @@
 
     <div id="mobile-projects-feed"></div>
 
+    <div id="page-flash" class="page-flash" aria-hidden="true"></div>
+
     <div id="lightbox-header" class="lightbox-header">
         <span id="lb-title"></span>
     </div>
@@ -127,6 +138,6 @@
 
 <!--
 git add .
-git commit -m "Update homepage and about page"
+git commit -m "minigame v1"
 git push
 -->

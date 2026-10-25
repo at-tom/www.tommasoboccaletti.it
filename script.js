@@ -8,8 +8,13 @@ const wrapper = document.getElementById('snap-wrapper');
 const projectsRight = document.getElementById('projects-right');
 let phase = 'landing';
 let isTransitioning = false;
+let gameState = 'idle'; // idle | countdown | playing | ending
 
-const TRANSITION_DURATION = 900;
+// landing <-> projects: a crisp white flash instead of the slide
+const FLASH_IN_MS = 110;
+const FLASH_OUT_MS = 340;
+const TRANSITION_DURATION = FLASH_IN_MS + FLASH_OUT_MS + 30;
+const pageFlash = document.getElementById('page-flash');
 
 const isDesktop = window.matchMedia('(min-width: 901px)').matches;
 
@@ -123,6 +128,7 @@ function showElementsInstantly() {
     els.forEach((el) => {
         el.style.transition = 'none';
         el.style.transform = 'none';
+        el.style.filter = '';
         el.style.opacity = '1';
     });
 }
@@ -137,6 +143,7 @@ function flyInElements() {
         const dx = cx - (rect.left + rect.width / 2);
         const dy = cy - (rect.top + rect.height / 2);
         el.style.transition = 'none';
+        el.style.filter = '';
         el.style.transform = `translate(${dx}px, ${dy}px) scale(0.4)`;
         el.style.opacity = '0';
     });
@@ -394,8 +401,6 @@ function animateThreeJS() {
                     if (phase === 'landing') hideBeeTooltip();
                 }
 
-                // Auto-collect flowers near the bee
-                if (phase === 'landing') checkFlowerProximity(beePixelX, beePixelY);
             }
         }
     }
@@ -406,45 +411,76 @@ function animateThreeJS() {
 function startFlyAway() {
     if (flyAwayStart !== null || !beeModel) return;
     flyAwayStart = performance.now();
+    // desktop: the white flash already hides the landing, stop rendering right away
     flyAwayTimeout = setTimeout(() => {
         // Suspend rendering instead of full disposal to keep GLB in memory
         cancelAnimationFrame(rafId);
-    }, TRANSITION_DURATION);
+    }, isDesktop ? 60 : 900);
 }
 
-function goToProjects() {
-    if (phase === 'projects') return;
+function applyWithoutTransition(fn) {
+    wrapper.classList.add('cut');
+    fn();
+    void wrapper.offsetHeight; // commit the new state before transitions are re-enabled
+    wrapper.classList.remove('cut');
+}
+
+// white flash: in (fast) -> swap sections while fully white -> out
+function flashCut(change, instant) {
+    if (!pageFlash || !isDesktop || instant) {
+        applyWithoutTransition(change);
+        return;
+    }
+    pageFlash.classList.remove('out');
+    void pageFlash.offsetWidth;
+    pageFlash.classList.add('in');
+    setTimeout(() => {
+        applyWithoutTransition(change);
+        pageFlash.classList.remove('in');
+        pageFlash.classList.add('out');
+        setTimeout(() => pageFlash.classList.remove('out'), FLASH_OUT_MS + 40);
+    }, FLASH_IN_MS + 10);
+}
+
+function goToProjects(instant = false) {
+    if (phase === 'projects' || gameState !== 'idle') return;
     phase = 'projects';
     isTransitioning = true;
+    hideBeeTooltip();
 
-    startFlyAway();
-    wrapper.classList.add('show-projects');
+    flashCut(() => {
+        startFlyAway();
+        wrapper.classList.add('show-projects');
+    }, instant);
 
     setTimeout(() => {
         isTransitioning = false;
         updateActiveByScroll();
-    }, TRANSITION_DURATION);
+    }, instant ? 60 : TRANSITION_DURATION);
 }
 
 function goToLanding() {
-    if (phase === 'landing') return;
+    if (phase === 'landing' || gameState !== 'idle') return;
     phase = 'landing';
     isTransitioning = true;
 
-    // Ensure elements are instantly visible (no repeated fly-in animation)
-    showElementsInstantly();
+    flashCut(() => {
+        // Ensure elements are instantly visible (no repeated fly-in animation)
+        showElementsInstantly();
 
-    wrapper.classList.remove('show-projects');
+        wrapper.classList.remove('show-projects');
 
-    if (flyAwayTimeout) {
-        clearTimeout(flyAwayTimeout);
-        flyAwayTimeout = null;
-    }
-    flyAwayStart = null;
+        if (flyAwayTimeout) {
+            clearTimeout(flyAwayTimeout);
+            flyAwayTimeout = null;
+        }
+        flyAwayStart = null;
+        isNearBee = false;
 
-    // Simply resume the animation loop with the existing model
-    cancelAnimationFrame(rafId);
-    rafId = requestAnimationFrame(animateThreeJS);
+        // Simply resume the animation loop with the existing model
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(animateThreeJS);
+    });
 
     setTimeout(() => {
         isTransitioning = false;
@@ -501,7 +537,7 @@ if (isDesktop) {
     window.addEventListener(
         'wheel',
         (e) => {
-            if (isTransitioning) {
+            if (isTransitioning || gameState !== 'idle') {
                 e.preventDefault();
                 return;
             }
@@ -535,7 +571,7 @@ if (isDesktop) {
         (e) => {
             if (touchStartY === null) return;
 
-            if (isTransitioning) {
+            if (isTransitioning || gameState !== 'idle') {
                 e.preventDefault();
                 return;
             }
@@ -1314,165 +1350,240 @@ if (customCursor && isDesktop) {
     });
 }
 
-let hasFedBee = false;
-let beeTooltipTimeout = null;
+/* =========================================================
+   MINIGAME — feed the bee
+   Double click / double tap on the landing -> texts burst,
+   3-2-1, 20s of flowers to click, max score + public top 10.
+   ========================================================= */
+const GAME_MS = 20000;
+const COUNT_STEP_MS = 800;
+const GAME_API = '/api/score';
+const MAX_KEY = 'bee_max_score';
+const GAME_FLOWERS = ['ASSETS/flower1.svg', 'ASSETS/flower2.svg', 'ASSETS/flower3.svg'];
 
-// Persistent flower counter for the session
-let flowerCount = parseInt(sessionStorage.getItem('bee_flowers') || '0', 10);
+const topSection = document.getElementById('top-section');
+const landing = document.getElementById('landing');
+const gameUi = document.getElementById('game-ui');
+const gameMsg = document.getElementById('game-msg');
+const gameLive = document.getElementById('game-live');
+const maxScoreEl = document.getElementById('bee-score');
+const gameTimer = document.getElementById('game-timer');
+const HOVER_TEXT = 'double click to play with the bee';
 
-const MILESTONE_MESSAGES = [
-    { at: 1,  msg: "gnam!" },
-    { at: 3,  msg: "more flowers!!" },
-    { at: 5,  msg: "you're so kind :)" },
-    { at: 7,  msg: "the bee is full..." },
-    { at: 10, msg: "ok ok, I'll stop eating" },
-    { at: 15, msg: "bzzzz ♥" },
-    { at: 20, msg: "you really like this huh" },
-];
-
-function getMilestoneMsg(count) {
-    let msg = null;
-    for (const m of MILESTONE_MESSAGES) {
-        if (count === m.at) { msg = m.msg; break; }
-    }
-    return msg;
-}
-
-function updateBeeScore() {
-    const el = document.getElementById('bee-score');
-    if (!el) return;
-    if (flowerCount === 0) {
-        el.classList.remove('visible');
-        el.textContent = '';
-    } else {
-        el.innerHTML = `<img src="ASSETS/flower1.svg" class="bee-score-icon" aria-hidden="true"> ${flowerCount}`;
-        el.classList.add('visible');
-    }
-}
-
-function showBeeTooltip(overrideMsg) {
-    clearTimeout(beeTooltipTimeout);
-    const footerCenter = document.querySelector('.landing-footer .footer-center');
-    const hintFeed = document.querySelector('.landing-footer .hint-feed');
-    if (footerCenter && hintFeed) {
-        const msg = overrideMsg || (hasFedBee ? "gnam gnam" : "double click to drop a flower for the bee");
-        hintFeed.textContent = msg;
-        footerCenter.classList.add('bee-hovered');
-
-        beeTooltipTimeout = setTimeout(() => {
-            footerCenter.classList.remove('bee-hovered');
-        }, 4000);
-    }
-}
-
-function hideBeeTooltip() {
-    clearTimeout(beeTooltipTimeout);
-    const footerCenter = document.querySelector('.landing-footer .footer-center');
-    if (footerCenter) {
-        footerCenter.classList.remove('bee-hovered');
-    }
-}
-
-// Track all active flowers for proximity auto-collect
+let gameScore = 0;
+let gameStartAt = 0;
+let gameTimers = [];
+let lbEl = null;
+let lbOpen = false;
+let lbEntry = false;
+let lbLoading = false;
+let tokenPromise = null;
 const activeFlowers = new Set();
 
-const landing = document.getElementById('landing');
+let maxScore = readMax();
 
-// Animate hint-feed pulse periodically to draw attention
-let hintPulseInterval = null;
-function startHintPulse() {
-    if (hintPulseInterval) return;
-    const hintFeed = document.querySelector('.landing-footer .hint-feed');
-    if (!hintFeed) return;
-    // Initial nudge after 3s
-    setTimeout(() => {
-        hintFeed.classList.add('hint-nudge');
-        setTimeout(() => hintFeed.classList.remove('hint-nudge'), 700);
-    }, 3000);
-    // Then repeat every 12s
-    hintPulseInterval = setInterval(() => {
-        if (phase !== 'landing') return;
-        hintFeed.classList.add('hint-nudge');
-        setTimeout(() => hintFeed.classList.remove('hint-nudge'), 700);
-    }, 12000);
+function readMax() {
+    try { return parseInt(localStorage.getItem(MAX_KEY) || '0', 10) || 0; } catch (e) { return 0; }
+}
+function writeMax(v) {
+    try { localStorage.setItem(MAX_KEY, String(v)); } catch (e) { /* private mode */ }
 }
 
-if (landing) {
-    startHintPulse();
+function later(fn, ms) {
+    const id = setTimeout(fn, ms);
+    gameTimers.push(id);
+    return id;
+}
+function clearGameTimers() {
+    gameTimers.forEach(clearTimeout);
+    gameTimers = [];
+}
+const lerp = (a, b, t) => a + (b - a) * t;
 
-    landing.addEventListener('dblclick', (e) => {
-        if (phase !== 'landing') return;
+/* "label: [flower] n" using the same flower sprite as before */
+function iconText(el, prefix, n) {
+    if (!el) return;
+    el.textContent = '';
+    if (prefix) el.append(prefix + ' ');
+    const img = new Image();
+    img.src = 'ASSETS/flower1.svg';
+    img.className = 'bee-score-icon';
+    img.alt = '';
+    el.append(img, ' ' + n);
+}
 
-        const rect = landing.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const clickY = e.clientY - rect.top;
+function renderMax() {
+    if (!maxScoreEl) return;
+    if (maxScore > 0) {
+        iconText(maxScoreEl, 'max score:', maxScore);
+        maxScoreEl.classList.add('visible');
+    } else {
+        maxScoreEl.classList.remove('visible');
+        maxScoreEl.textContent = '';
+    }
+}
 
-        spawnFlower(clickX, clickY, landing);
+/* ---- hover on the bee: every text becomes the hint ---- */
+function showBeeTooltip() {
+    if (!topSection || gameState !== 'idle' || lbOpen) return;
+    topSection.classList.add('is-hover');
+}
+function hideBeeTooltip() {
+    if (topSection) topSection.classList.remove('is-hover');
+}
+
+/* wraps each [data-swap] text so the hover hint can sit on top of it */
+function setupSwapText() {
+    document.querySelectorAll('[data-swap]').forEach((el) => {
+        const wrap = document.createElement('span');
+        wrap.className = 'sw';
+        const base = document.createElement('span');
+        base.className = 'sw-base';
+        while (el.firstChild) base.appendChild(el.firstChild);
+        const over = document.createElement('span');
+        over.className = 'sw-over';
+        over.dataset.a = el.dataset.swap;
+        over.setAttribute('aria-hidden', 'true');
+        over.textContent = HOVER_TEXT;
+        wrap.append(base, over);
+        el.appendChild(wrap);
     });
 }
 
-function spawnFlower(clickX, clickY, container) {
-    const flowers = ['ASSETS/flower1.svg', 'ASSETS/flower2.svg', 'ASSETS/flower3.svg'];
-    const randomFlower = flowers[Math.floor(Math.random() * flowers.length)];
+function showMsg(text) {
+    if (!gameMsg) return;
+    gameMsg.classList.remove('show');
+    later(() => {
+        gameMsg.textContent = text;
+        gameMsg.classList.add('show');
+    }, 160);
+}
+function hideMsg() {
+    if (gameMsg) gameMsg.classList.remove('show');
+}
+
+/* all landing texts pop outward + blur away */
+function burstTexts() {
+    const els = document.querySelectorAll('#top-section [data-fly]');
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    els.forEach((el, i) => {
+        const r = el.getBoundingClientRect();
+        const dx = r.left + r.width / 2 - cx;
+        const dy = r.top + r.height / 2 - cy;
+        const len = Math.hypot(dx, dy) || 1;
+        el.style.transition = 'transform 0.5s cubic-bezier(0.3, 0, 0.8, 0.2), opacity 0.35s ease-out, filter 0.4s ease-out';
+        el.style.transitionDelay = `${i * 0.025}s`;
+        el.style.transform = `translate(${(dx / len) * 80}px, ${(dy / len) * 80}px) scale(1.4)`;
+        el.style.filter = 'blur(8px)';
+        el.style.opacity = '0';
+    });
+}
+
+async function apiStart() {
+    try {
+        const r = await fetch(GAME_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'start' })
+        });
+        if (!r.ok) return null;
+        const d = await r.json();
+        return d.token || null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function startGame() {
+    if (gameState !== 'idle' || phase !== 'landing' || isTransitioning) return;
+    closeLeaderboard();
+    gameState = 'countdown';
+    gameScore = 0;
+    hideBeeTooltip();
+    topSection.classList.add('game-on');
+    burstTexts();
+    tokenPromise = apiStart();
+
+    later(() => showMsg('3'), 550);
+    later(() => showMsg('2'), 550 + COUNT_STEP_MS);
+    later(() => showMsg('1'), 550 + COUNT_STEP_MS * 2);
+    later(beginPlay, 550 + COUNT_STEP_MS * 3);
+}
+
+function beginPlay() {
+    gameState = 'playing';
+    gameStartAt = performance.now();
+    showMsg('click fast to feed the bee!');
+    later(hideMsg, 2200);
+
+    iconText(gameLive, '', 0);
+    gameLive.classList.add('show');
+
+    gameTimer.style.setProperty('--game-ms', GAME_MS + 'ms');
+    gameTimer.classList.add('on');
+    void gameTimer.offsetWidth;
+    gameTimer.classList.add('run');
+
+    spawnLoop();
+    later(endGame, GAME_MS);
+}
+
+function spawnLoop() {
+    if (gameState !== 'playing') return;
+    const p = Math.min(1, (performance.now() - gameStartAt) / GAME_MS);
+    const ttl = lerp(1700, 950, p) * (0.9 + Math.random() * 0.2);
+    spawnGameFlower(ttl);
+    if (p > 0.45 && Math.random() < 0.35) spawnGameFlower(ttl);
+    later(spawnLoop, lerp(650, 380, p) * (0.8 + Math.random() * 0.4));
+}
+
+function spawnGameFlower(ttl) {
+    if (!landing) return;
+    const rect = landing.getBoundingClientRect();
+    const padX = Math.min(70, rect.width * 0.08);
+    const padY = Math.min(70, rect.height * 0.1);
+    let x, y, tries = 0;
+    do {
+        x = padX + Math.random() * Math.max(1, rect.width - padX * 2);
+        y = padY + Math.random() * Math.max(1, rect.height - padY * 2);
+        tries++;
+    } while (
+        tries < 10 &&
+        [...activeFlowers].some((f) => Math.hypot(parseFloat(f.style.left) - x, parseFloat(f.style.top) - y) < 100)
+    );
 
     const flower = document.createElement('div');
     flower.className = 'spawned-flower';
-    flower.style.left = `${clickX}px`;
-    flower.style.top = `${clickY}px`;
-    flower.style.backgroundImage = `url('${randomFlower}')`;
-
-    container.appendChild(flower);
+    flower.style.left = `${x}px`;
+    flower.style.top = `${y}px`;
+    flower.style.backgroundImage = `url('${GAME_FLOWERS[Math.floor(Math.random() * GAME_FLOWERS.length)]}')`;
+    landing.appendChild(flower);
     activeFlowers.add(flower);
+    requestAnimationFrame(() => flower.classList.add('active'));
 
-    requestAnimationFrame(() => {
-        flower.classList.add('active');
-    });
+    flower._auto = setTimeout(() => {
+        if (!activeFlowers.has(flower)) return;
+        activeFlowers.delete(flower);
+        flower.classList.add('fading-out');
+        setTimeout(() => flower.remove(), 520);
+    }, ttl);
 
-    // Auto-remove after 8 seconds if not collected
-    const autoRemove = setTimeout(() => {
-        if (flower.parentNode) {
-            flower.classList.add('fading-out');
-            setTimeout(() => { flower.remove(); activeFlowers.delete(flower); }, 500);
-        }
-    }, 8000);
-    flower._autoRemove = autoRemove;
-
-    flower.addEventListener('click', (ev) => {
+    flower.addEventListener('pointerdown', (ev) => {
+        ev.preventDefault();
         ev.stopPropagation();
-        clearTimeout(flower._autoRemove);
         collectFlower(flower);
-    });
-
-    return flower;
-}
-
-// Auto-collect flowers that drift near the bee
-function checkFlowerProximity(beePixelX, beePixelY) {
-    if (!landing || activeFlowers.size === 0) return;
-    const rect = landing.getBoundingClientRect();
-    const AUTO_COLLECT_RADIUS = 90;
-
-    activeFlowers.forEach(flower => {
-        if (!flower.parentNode) { activeFlowers.delete(flower); return; }
-        const fx = parseFloat(flower.style.left) + rect.left;
-        const fy = parseFloat(flower.style.top) + rect.top;
-        const dist = Math.hypot(fx - beePixelX, fy - beePixelY);
-        if (dist < AUTO_COLLECT_RADIUS) {
-            clearTimeout(flower._autoRemove);
-            collectFlower(flower);
-        }
     });
 }
 
 function collectFlower(flower) {
-    if (!activeFlowers.has(flower)) return; // already collected
+    if (!activeFlowers.has(flower)) return;
     activeFlowers.delete(flower);
+    clearTimeout(flower._auto);
 
     const rect = landing ? landing.getBoundingClientRect() : { left: 0, top: 0 };
-    // Find where the bee is on screen
     let targetX = window.innerWidth / 2;
     let targetY = window.innerHeight / 2;
-
     if (beeModel && camera && canvasContainer) {
         const screenPos = beeModel.position.clone().project(camera);
         const cr = canvasContainer.getBoundingClientRect();
@@ -1480,29 +1591,269 @@ function collectFlower(flower) {
         targetY = cr.top + (-screenPos.y * 0.5 + 0.5) * cr.height;
     }
 
-    // Particle burst at flower position
-    const flowerAbsX = parseFloat(flower.style.left) + rect.left;
-    const flowerAbsY = parseFloat(flower.style.top) + rect.top;
-    spawnParticleBurst(flowerAbsX, flowerAbsY);
+    spawnParticleBurst(parseFloat(flower.style.left) + rect.left, parseFloat(flower.style.top) + rect.top);
 
-    // Animate flower flying to bee
     flower.style.transition = 'left 0.55s cubic-bezier(0.25, 1, 0.5, 1), top 0.55s cubic-bezier(0.25, 1, 0.5, 1), transform 0.55s ease, opacity 0.55s ease';
     flower.style.left = `${targetX - rect.left}px`;
     flower.style.top = `${targetY - rect.top}px`;
     flower.style.transform = 'translate(-50%, -50%) scale(0) rotate(270deg)';
     flower.style.opacity = '0';
 
-    hasFedBee = true;
-    flowerCount++;
-    sessionStorage.setItem('bee_flowers', flowerCount);
-    updateBeeScore();
+    if (gameState === 'playing') {
+        gameScore++;
+        iconText(gameLive, '', gameScore);
+    }
 
-    const milestoneMsg = getMilestoneMsg(flowerCount);
-    showBeeTooltip(milestoneMsg || undefined);
-
-    setTimeout(() => { flower.remove(); }, 600);
-
+    setTimeout(() => flower.remove(), 600);
     spawnPlusOne(targetX, targetY);
+}
+
+function endGame() {
+    if (gameState !== 'playing') return;
+    gameState = 'ending';
+    clearGameTimers();
+    const finalScore = gameScore;
+    const finalToken = tokenPromise;
+
+    activeFlowers.forEach((f) => {
+        clearTimeout(f._auto);
+        f.classList.add('fading-out');
+        setTimeout(() => f.remove(), 520);
+    });
+    activeFlowers.clear();
+    hideMsg();
+    gameTimer.classList.remove('on');
+
+    // everything comes back to normal
+    setTimeout(() => {
+        gameTimer.classList.remove('run');
+        gameLive.classList.remove('show');
+        topSection.classList.remove('game-on');
+        flyInElements();
+
+        if (finalScore > maxScore) {
+            maxScore = finalScore;
+            writeMax(maxScore);
+        }
+        renderMax();
+        gameState = 'idle';
+        isNearBee = false;
+
+        if (finalScore > 0) {
+            setTimeout(() => openLeaderboard(finalScore, finalToken), 1100);
+        }
+    }, 900);
+}
+
+/* ---- top 10 (needs /api/score; silently skipped when it isn't there) ---- */
+async function fetchTop() {
+    const ctrl = new AbortController();
+    const to = setTimeout(() => ctrl.abort(), 4000);
+    try {
+        const r = await fetch(GAME_API, { cache: 'no-store', signal: ctrl.signal });
+        if (!r.ok) return null;
+        const d = await r.json();
+        return d && d.enabled ? d : null;
+    } catch (e) {
+        return null;
+    } finally {
+        clearTimeout(to);
+    }
+}
+
+async function openLeaderboard(score = 0, token = null) {
+    if (lbLoading || gameState !== 'idle') return;
+    lbLoading = true;
+    const data = await fetchTop();
+    lbLoading = false;
+    if (!data || gameState !== 'idle' || phase !== 'landing') return;
+
+    const top = (data.top || []).slice(0, 10);
+    let slot = -1;
+    if (score > 0 && token) {
+        slot = top.findIndex((r) => score > r.s);
+        if (slot === -1 && top.length < 10) slot = top.length;
+    }
+    renderLb({ top, slot, score, token });
+}
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
+    if (!gameUi) return;
+    if (!lbEl) {
+        lbEl = document.createElement('div');
+        lbEl.className = 'lb';
+        lbEl.setAttribute('role', 'dialog');
+        lbEl.setAttribute('aria-label', 'top 10');
+        gameUi.appendChild(lbEl);
+        const el = lbEl;
+        requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
+    }
+    lbOpen = true;
+    lbEntry = slot >= 0;
+    hideBeeTooltip();
+    topSection.classList.add('lb-on');
+
+    const el = lbEl;
+    el.textContent = '';
+
+    const head = document.createElement('div');
+    head.className = 'lb-head';
+    const title = document.createElement('span');
+    title.textContent = 'top 10';
+    const x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'lb-x';
+    x.textContent = slot >= 0 ? 'skip' : 'close';
+    head.append(title, x);
+
+    const list = document.createElement('ol');
+    list.className = 'lb-list';
+
+    const rows = top.map((r, i) => ({ n: r.n, s: r.s, mine: i === mine }));
+    if (slot >= 0) rows.splice(slot, 0, { entry: true });
+
+    let form = null;
+    let input = null;
+
+    rows.slice(0, 10).forEach((r, i) => {
+        const li = document.createElement('li');
+        if (r.mine) li.className = 'lb-mine';
+        const rk = document.createElement('span');
+        rk.className = 'lb-r';
+        rk.textContent = pad2(i + 1);
+        const nm = document.createElement('span');
+        nm.className = 'lb-n';
+        const sc = document.createElement('span');
+        sc.className = 'lb-s';
+
+        if (r.entry) {
+            form = document.createElement('form');
+            form.className = 'lb-form';
+            form.setAttribute('autocomplete', 'off');
+            input = document.createElement('input');
+            input.className = 'lb-in';
+            input.type = 'text';
+            input.maxLength = 3;
+            input.autocomplete = 'off';
+            input.autocapitalize = 'characters';
+            input.spellcheck = false;
+            input.setAttribute('aria-label', 'your name, 3 letters');
+            form.appendChild(input);
+            nm.appendChild(form);
+            sc.textContent = String(score);
+        } else {
+            nm.textContent = r.n;
+            sc.textContent = String(r.s);
+        }
+        li.append(rk, nm, sc);
+        list.appendChild(li);
+    });
+
+    if (!rows.length) {
+        const li = document.createElement('li');
+        li.className = 'lb-empty';
+        li.textContent = 'no scores yet';
+        list.appendChild(li);
+    }
+
+    el.append(head, list);
+
+    x.addEventListener('click', () => {
+        if (form && x.textContent === 'save') form.requestSubmit();
+        else closeLeaderboard();
+    });
+
+    if (form) {
+        input.addEventListener('input', () => {
+            input.value = input.value.toUpperCase().replace(/[^A-Z]/g, '');
+            x.textContent = input.value.length === 3 ? 'save' : 'skip';
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = input.value;
+            const shake = () => {
+                form.classList.remove('bad');
+                void form.offsetWidth;
+                form.classList.add('bad');
+            };
+            if (name.length !== 3) { shake(); return; }
+            input.disabled = true;
+            try {
+                const tk = await token;
+                if (!tk) throw new Error('no token');
+                const r = await fetch(GAME_API, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'submit', name, score, token: tk })
+                });
+                const d = await r.json().catch(() => ({}));
+                if (!r.ok || !d.top) throw new Error(d.error || 'fail');
+                renderLb({ top: d.top, mine: typeof d.rank === 'number' ? d.rank : -1 });
+            } catch (err) {
+                input.disabled = false;
+                shake();
+                input.focus({ preventScroll: true });
+            }
+        });
+
+        setTimeout(() => input.focus({ preventScroll: true }), 450);
+    }
+}
+
+function closeLeaderboard() {
+    if (topSection) topSection.classList.remove('lb-on');
+    if (!lbEl) { lbOpen = false; lbEntry = false; return; }
+    const el = lbEl;
+    lbEl = null;
+    lbOpen = false;
+    lbEntry = false;
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 450);
+    isNearBee = false;
+}
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lbOpen) closeLeaderboard();
+});
+
+if (topSection && landing && gameUi) {
+    setupSwapText();
+    renderMax();
+
+    if (maxScoreEl) {
+        maxScoreEl.addEventListener('click', () => {
+            if (gameState !== 'idle' || lbOpen) return;
+            openLeaderboard(0, null);
+        });
+    }
+
+    // double click (mouse) / double tap (touch), anywhere on the landing
+    let tapDown = null;
+    let lastTap = null;
+    landing.addEventListener('pointerdown', (e) => {
+        tapDown = { x: e.clientX, y: e.clientY };
+    });
+    landing.addEventListener('pointerup', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (!tapDown) return;
+        const moved = Math.hypot(e.clientX - tapDown.x, e.clientY - tapDown.y);
+        tapDown = null;
+        if (moved > 12) return;
+        if (gameState !== 'idle' || phase !== 'landing' || isTransitioning) return;
+        if (e.target.closest('.spawned-flower')) return;
+
+        const now = performance.now();
+        if (lastTap && now - lastTap.t < 350 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 50) {
+            lastTap = null;
+            startGame();
+            return;
+        }
+        lastTap = { t: now, x: e.clientX, y: e.clientY };
+        if (lbOpen && !lbEntry) closeLeaderboard();
+    });
 }
 
 function spawnParticleBurst(x, y) {
@@ -1543,9 +1894,6 @@ function spawnPlusOne(x, y) {
         plusOne.remove();
     }, 1000);
 }
-
-// Initialise score display
-updateBeeScore();
 
 loadProjects();
 
@@ -1590,7 +1938,7 @@ loadProjects();
             sessionStorage.removeItem('scrollToProjects');
             // Go to projects instantly
             setTimeout(() => {
-                goToProjects();
+                goToProjects(true);
             }, 100);
         }
     }
