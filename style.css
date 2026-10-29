@@ -970,14 +970,14 @@ body.lightbox-open .lightbox-header {
     -webkit-user-select: none;
 }
 
-/* Generous invisible hit-target area (expands clickable bounds by ~28px on all sides) */
+/* Subtle hit-target area (tightened from -28px to -6px for accurate clicking) */
 .spawned-flower::before {
     content: '';
     position: absolute;
-    top: -28px;
-    left: -28px;
-    right: -28px;
-    bottom: -28px;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
     pointer-events: auto;
 }
 

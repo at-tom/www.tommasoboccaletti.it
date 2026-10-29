@@ -1465,6 +1465,47 @@ function hideMsg() {
     if (gameMsg) gameMsg.classList.remove('show');
 }
 
+const BEE_QUOTES = [
+    'gnam gnam!',
+    'good sup',
+    'gimme more',
+    'slurp!',
+    'so sweet!',
+    'nom nom nom',
+    'buzzin’ good!',
+    'nectar rush!',
+    'yummy yummy',
+    'more flowers pls',
+    'bzzzz tasty!',
+    'delish!'
+];
+
+let lastBeeQuoteIdx = -1;
+let beeQuoteTimer = null;
+
+function getRandomBeeQuote() {
+    let idx;
+    do {
+        idx = Math.floor(Math.random() * BEE_QUOTES.length);
+    } while (idx === lastBeeQuoteIdx && BEE_QUOTES.length > 1);
+    lastBeeQuoteIdx = idx;
+    return BEE_QUOTES[idx];
+}
+
+function showBeeQuote(text) {
+    if (!gameMsg || gameState !== 'playing') return;
+    clearTimeout(beeQuoteTimer);
+    gameMsg.classList.remove('show');
+    beeQuoteTimer = later(() => {
+        if (gameState !== 'playing') return;
+        gameMsg.textContent = text;
+        gameMsg.classList.add('show');
+        beeQuoteTimer = later(() => {
+            if (gameState === 'playing') hideMsg();
+        }, 1600);
+    }, 120);
+}
+
 /* all landing texts pop outward + blur away */
 function burstTexts() {
     const els = document.querySelectorAll('#top-section [data-fly]');
@@ -1616,6 +1657,9 @@ function collectFlower(flower) {
     if (gameState === 'playing') {
         gameScore++;
         iconText(gameLive, '', gameScore);
+        if (gameScore > 0 && gameScore % 4 === 0) {
+            showBeeQuote(getRandomBeeQuote());
+        }
     }
 
     setTimeout(() => flower.remove(), 600);
@@ -1956,27 +2000,6 @@ if (topSection && landing && gameUi) {
     let tapDown = null;
     let lastTap = null;
     landing.addEventListener('pointerdown', (e) => {
-        if (gameState === 'playing') {
-            const rect = landing.getBoundingClientRect();
-            const clickX = e.clientX;
-            const clickY = e.clientY;
-            let closest = null;
-            let minDist = 75; // Generous radius so near-misses register reliably
-            for (const f of activeFlowers) {
-                if (f._collected) continue;
-                const fx = rect.left + parseFloat(f.style.left);
-                const fy = rect.top + parseFloat(f.style.top);
-                const d = Math.hypot(clickX - fx, clickY - fy);
-                if (d < minDist) {
-                    minDist = d;
-                    closest = f;
-                }
-            }
-            if (closest) {
-                collectFlower(closest);
-                return;
-            }
-        }
         tapDown = { x: e.clientX, y: e.clientY };
     });
     landing.addEventListener('pointerup', (e) => {
