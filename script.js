@@ -1566,23 +1566,34 @@ function spawnGameFlower(ttl) {
     requestAnimationFrame(() => flower.classList.add('active'));
 
     flower._auto = setTimeout(() => {
-        if (!activeFlowers.has(flower)) return;
-        activeFlowers.delete(flower);
+        if (flower._collected || !activeFlowers.has(flower)) return;
         flower.classList.add('fading-out');
-        setTimeout(() => flower.remove(), 520);
+        flower._removeTimer = setTimeout(() => {
+            activeFlowers.delete(flower);
+            flower.remove();
+        }, 520);
     }, ttl);
 
-    flower.addEventListener('pointerdown', (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
+    const triggerCollect = (ev) => {
+        if (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
         collectFlower(flower);
-    });
+    };
+
+    flower.addEventListener('pointerdown', triggerCollect);
+    flower.addEventListener('click', triggerCollect);
 }
 
 function collectFlower(flower) {
-    if (!activeFlowers.has(flower)) return;
+    if (!flower || flower._collected || !activeFlowers.has(flower)) return;
+    flower._collected = true;
     activeFlowers.delete(flower);
     clearTimeout(flower._auto);
+    clearTimeout(flower._removeTimer);
+    flower.classList.remove('fading-out');
+    flower.style.pointerEvents = 'none';
 
     const rect = landing ? landing.getBoundingClientRect() : { left: 0, top: 0 };
     let targetX = window.innerWidth / 2;
@@ -1619,7 +1630,10 @@ function endGame() {
     const finalToken = tokenPromise;
 
     activeFlowers.forEach((f) => {
+        f._collected = true;
+        f.style.pointerEvents = 'none';
         clearTimeout(f._auto);
+        clearTimeout(f._removeTimer);
         f.classList.add('fading-out');
         setTimeout(() => f.remove(), 520);
     });
@@ -1784,9 +1798,6 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
     const head = document.createElement('div');
     head.className = 'lb-head';
 
-    const titleWrap = document.createElement('div');
-    titleWrap.className = 'lb-title-wrap';
-
     const handleIcon = document.createElement('span');
     handleIcon.className = 'lb-drag-handle';
     handleIcon.setAttribute('aria-hidden', 'true');
@@ -1797,14 +1808,12 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
     title.className = 'lb-title';
     title.textContent = 'top 10';
 
-    titleWrap.append(handleIcon, title);
-
     const x = document.createElement('button');
     x.type = 'button';
     x.className = 'lb-x';
     x.textContent = slot >= 0 ? 'skip' : '✕';
     x.setAttribute('aria-label', slot >= 0 ? 'Salta inserimento' : 'Chiudi classifica');
-    head.append(titleWrap, x);
+    head.append(handleIcon, title, x);
 
     makeDraggable(el, head);
 
@@ -1947,6 +1956,27 @@ if (topSection && landing && gameUi) {
     let tapDown = null;
     let lastTap = null;
     landing.addEventListener('pointerdown', (e) => {
+        if (gameState === 'playing') {
+            const rect = landing.getBoundingClientRect();
+            const clickX = e.clientX;
+            const clickY = e.clientY;
+            let closest = null;
+            let minDist = 75; // Generous radius so near-misses register reliably
+            for (const f of activeFlowers) {
+                if (f._collected) continue;
+                const fx = rect.left + parseFloat(f.style.left);
+                const fy = rect.top + parseFloat(f.style.top);
+                const d = Math.hypot(clickX - fx, clickY - fy);
+                if (d < minDist) {
+                    minDist = d;
+                    closest = f;
+                }
+            }
+            if (closest) {
+                collectFlower(closest);
+                return;
+            }
+        }
         tapDown = { x: e.clientX, y: e.clientY };
     });
     landing.addEventListener('pointerup', (e) => {

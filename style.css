@@ -963,7 +963,22 @@ body.lightbox-open .lightbox-header {
     opacity: 0;
     z-index: 10;
     cursor: none !important;
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+    transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Generous invisible hit-target area (expands clickable bounds by ~28px on all sides) */
+.spawned-flower::before {
+    content: '';
+    position: absolute;
+    top: -28px;
+    left: -28px;
+    right: -28px;
+    bottom: -28px;
+    pointer-events: auto;
 }
 
 .spawned-flower.active {
@@ -1096,6 +1111,11 @@ body.lightbox-open .lightbox-header {
     transition: transform var(--game-ms, 20000ms) linear;
 }
 
+.top-section.game-on,
+.top-section.game-on #landing {
+    touch-action: none;
+}
+
 .top-section.game-on .site-header,
 .top-section.game-on .landing-label,
 .top-section.game-on .landing-footer {
@@ -1109,14 +1129,17 @@ body.lightbox-open .lightbox-header {
     bottom: calc(var(--side-margin) + 2.4em);
     width: min(290px, calc(100vw - 32px));
     max-height: calc(100vh - 120px);
-    background: rgba(255, 255, 255, 0.94);
+    background: rgba(255, 255, 255, 0.95);
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(0, 0, 0, 0.14);
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-    border-radius: 6px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    border-radius: 0;
     padding: 12px 14px 10px;
     pointer-events: auto;
+    font-size: var(--text-size);
+    font-weight: var(--text-weight);
+    letter-spacing: var(--text-tracking);
     line-height: 1.45;
     opacity: 0;
     filter: blur(6px);
@@ -1138,15 +1161,15 @@ body.lightbox-open .lightbox-header {
 
 .lb.is-dragging {
     transition: none !important;
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
     cursor: grabbing !important;
 }
 
 .lb-head {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 2.2em 1fr auto;
     align-items: center;
-    padding-bottom: 7px;
+    padding: 0 4px 7px 4px;
     margin-bottom: 7px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
     cursor: grab;
@@ -1157,20 +1180,14 @@ body.lightbox-open .lightbox-header {
     cursor: grabbing;
 }
 
-.lb-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-weight: 500;
-    letter-spacing: 0.03em;
-}
-
 .lb-drag-handle {
     opacity: 0.35;
-    font-size: 13px;
+    font-size: var(--text-size);
     line-height: 1;
     cursor: grab;
     transition: opacity 0.2s;
+    display: inline-flex;
+    align-items: center;
 }
 
 .lb-head:hover .lb-drag-handle {
@@ -1178,28 +1195,32 @@ body.lightbox-open .lightbox-header {
 }
 
 .lb-title {
-    font-size: 0.95em;
-    font-weight: 500;
+    font-size: var(--text-size);
+    font-weight: var(--text-weight);
+    letter-spacing: var(--text-tracking);
 }
 
 .lb-x {
     font: inherit;
-    font-size: 0.88em;
+    font-size: var(--text-size);
+    font-weight: var(--text-weight);
+    letter-spacing: var(--text-tracking);
     color: inherit;
-    background: rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 4px;
-    padding: 2px 7px;
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
     cursor: pointer;
-    opacity: 0.75;
-    transition: all 0.2s ease;
-    line-height: 1.2;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+    line-height: 1;
+    text-align: right;
 }
 
 .lb-x:hover {
     opacity: 1;
-    background: rgba(0, 0, 0, 0.08);
-    border-color: rgba(0, 0, 0, 0.25);
+    background: none;
+    border: none;
     text-decoration: none;
 }
 
@@ -1220,8 +1241,8 @@ body.lightbox-open .lightbox-header {
     grid-template-columns: 2.2em 1fr auto;
     align-items: center;
     padding: 3px 4px;
-    border-radius: 3px;
-    font-size: 0.95em;
+    border-radius: 0;
+    font-size: var(--text-size);
     transition: background 0.15s ease;
 }
 
@@ -1230,20 +1251,23 @@ body.lightbox-open .lightbox-header {
 }
 
 .lb-list .lb-r {
-    opacity: 0.4;
-    font-size: 0.88em;
+    opacity: 0.45;
+    font-size: var(--text-size);
     font-variant-numeric: tabular-nums;
+    font-weight: var(--text-weight);
 }
 
 .lb-list .lb-n {
-    font-weight: 500;
+    font-size: var(--text-size);
+    font-weight: var(--text-weight);
     letter-spacing: 0.08em;
 }
 
 .lb-list .lb-s {
     text-align: right;
+    font-size: var(--text-size);
     font-variant-numeric: tabular-nums;
-    font-weight: 500;
+    font-weight: var(--text-weight);
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -1252,7 +1276,7 @@ body.lightbox-open .lightbox-header {
 
 .lb-list li.lb-mine {
     background: rgba(0, 0, 0, 0.06);
-    font-weight: 600;
+    border-radius: 0;
 }
 
 .lb-list li.lb-mine .lb-n {
@@ -1264,7 +1288,7 @@ body.lightbox-open .lightbox-header {
     padding: 12px 4px;
     text-align: center;
     font-style: italic;
-    font-size: 0.9em;
+    font-size: var(--text-size);
 }
 
 .lb-form {
@@ -1274,27 +1298,27 @@ body.lightbox-open .lightbox-header {
 
 .lb-in {
     font: inherit;
-    font-size: 1.05em;
-    font-weight: 600;
-    letter-spacing: 0.15em;
+    font-size: var(--text-size);
+    font-weight: var(--text-weight);
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: inherit;
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.35);
-    border-radius: 3px;
+    border-radius: 0;
     outline: none;
     width: 3.8em;
-    padding: 2px 4px;
-    text-align: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    padding: 1px 4px;
+    text-align: left;
+    box-shadow: none;
+    transition: border-color 0.2s;
     -webkit-appearance: none;
     appearance: none;
 }
 
 .lb-in:focus {
     border-color: #000000;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+    box-shadow: none;
 }
 
 .lb-in:disabled {
