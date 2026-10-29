@@ -1405,10 +1405,6 @@ body.page-about {
     overflow-y: auto;
 }
 
-body.page-about .landing-label {
-    position: fixed;
-}
-
 #main-content-about {
     margin-top: 0;
     width: 100%;
@@ -1638,9 +1634,5 @@ body.page-about .landing-label {
     .about-text.right {
         text-align: right;
         width: 48%;
-    }
-
-    body.page-about .landing-label {
-        display: none;
     }
 }
