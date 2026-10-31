@@ -1066,12 +1066,18 @@ body.lightbox-open .lightbox-header {
     transform: translateX(-50%) translateY(0);
 }
 
+.game-max {
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
 .game-max.visible {
     opacity: 0.8;
     pointer-events: auto;
 }
 
-.game-max.visible:hover {
+.game-max.visible:hover,
+.game-max.visible:active {
     opacity: 1;
     text-decoration: underline;
 }
@@ -1289,6 +1295,15 @@ body.lightbox-open .lightbox-header {
     text-align: center;
     font-style: italic;
     font-size: var(--text-size);
+}
+
+.lb-empty.lb-loading {
+    animation: lbPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes lbPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.85; }
 }
 
 .lb-form {
@@ -1634,5 +1649,46 @@ body.page-about {
     .about-text.right {
         text-align: right;
         width: 48%;
+    }
+
+    /* Disabilita minigioco fiori su mobile */
+    #hover-msg,
+    #game-msg,
+    #game-live,
+    #game-timer,
+    .spawned-flower,
+    .plus-one-float,
+    .bee-particle {
+        display: none !important;
+    }
+
+    .top-section.is-hover .sw-over {
+        display: none !important;
+    }
+
+    .top-section.is-hover .sw-base {
+        opacity: 1 !important;
+        filter: none !important;
+    }
+
+    /* Leaderboard centrata su mobile sopra bee-score */
+    .lb {
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) scale(0.97) translateY(8px);
+        width: min(320px, calc(100vw - 32px));
+        bottom: calc(var(--side-margin) + 3.4em) !important;
+    }
+
+    .lb.show {
+        transform: translateX(-50%) scale(1) translateY(0);
+    }
+
+    .lb-head {
+        cursor: default;
+    }
+
+    .lb-drag-handle {
+        display: none;
     }
 }

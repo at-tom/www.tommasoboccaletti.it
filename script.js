@@ -301,6 +301,10 @@ function initThreeJS() {
             }
         }
 
+        if (isMobile && gameState !== 'idle') {
+            endGame();
+        }
+
         // Always update camera aspect and renderer size to prevent stretching
         camera.aspect = canvasContainer.clientWidth / canvasContainer.clientHeight;
         camera.updateProjectionMatrix();
@@ -395,7 +399,7 @@ function animateThreeJS() {
 
                 if (dist < PROXIMITY_RADIUS && !isNearBee) {
                     isNearBee = true;
-                    if (phase === 'landing') showBeeTooltip();
+                    if (phase === 'landing' && window.innerWidth > 900) showBeeTooltip();
                 } else if (dist >= PROXIMITY_RADIUS && isNearBee) {
                     isNearBee = false;
                     if (phase === 'landing') hideBeeTooltip();
@@ -1414,7 +1418,10 @@ function iconText(el, prefix, n) {
 
 function renderMax() {
     if (!maxScoreEl) return;
-    if (lbOpen) {
+    if (lbLoading) {
+        maxScoreEl.textContent = 'loading leaderboard...';
+        maxScoreEl.classList.add('visible');
+    } else if (lbOpen) {
         maxScoreEl.textContent = 'close top 10';
         maxScoreEl.classList.add('visible');
     } else if (maxScore > 0) {
@@ -1428,7 +1435,7 @@ function renderMax() {
 
 /* ---- hover on the bee: every text becomes the hint ---- */
 function showBeeTooltip() {
-    if (!topSection || gameState !== 'idle' || lbOpen) return;
+    if (!topSection || gameState !== 'idle' || lbOpen || window.innerWidth <= 900) return;
     topSection.classList.add('is-hover');
 }
 function hideBeeTooltip() {
@@ -1540,7 +1547,7 @@ async function apiStart() {
 }
 
 function startGame() {
-    if (gameState !== 'idle' || phase !== 'landing' || isTransitioning) return;
+    if (window.innerWidth <= 900 || gameState !== 'idle' || phase !== 'landing' || isTransitioning) return;
     closeLeaderboard();
     gameState = 'countdown';
     gameScore = 0;
@@ -1706,7 +1713,7 @@ function endGame() {
     }, 900);
 }
 
-/* ---- top 10 (needs /api/score; silently skipped when it isn't there) ---- */
+/* ---- top 10 (needs /api/score; opens leaderboard even if offline or empty) ---- */
 async function fetchTop() {
     const ctrl = new AbortController();
     const to = setTimeout(() => ctrl.abort(), 4000);
@@ -1714,7 +1721,7 @@ async function fetchTop() {
         const r = await fetch(GAME_API, { cache: 'no-store', signal: ctrl.signal });
         if (!r.ok) return null;
         const d = await r.json();
-        return d && d.enabled ? d : null;
+        return d;
     } catch (e) {
         return null;
     } finally {
@@ -1732,6 +1739,7 @@ function makeDraggable(panel, handle) {
     let initialTop = 0;
 
     handle.addEventListener('pointerdown', (e) => {
+        if (window.innerWidth <= 900) return;
         if (e.target.closest('button, input, a, form')) return;
         if (e.pointerType === 'mouse' && e.button !== 0) return;
 
@@ -1791,39 +1799,62 @@ function makeDraggable(panel, handle) {
 }
 
 async function openLeaderboard(score = 0, token = null) {
-    if (lbLoading || gameState !== 'idle') return;
+    if (gameState !== 'idle') return;
     if (lbOpen && score === 0) {
         closeLeaderboard();
         return;
     }
     lbLoading = true;
-    const data = await fetchTop();
-    lbLoading = false;
-    if (!data || gameState !== 'idle' || phase !== 'landing') return;
+    renderLb({ top: [], score, token, loading: true });
+    renderMax();
 
-    const top = (data.top || []).slice(0, 10);
+    let data = null;
+    try {
+        data = await fetchTop();
+    } catch (_) {
+        data = null;
+    }
+    lbLoading = false;
+
+    if (!lbOpen || gameState !== 'idle') {
+        renderMax();
+        return;
+    }
+    if (window.innerWidth > 900 && phase !== 'landing') {
+        closeLeaderboard();
+        return;
+    }
+
+    const top = (data && Array.isArray(data.top)) ? data.top.slice(0, 10) : [];
     let slot = -1;
     if (score > 0 && token) {
         slot = top.findIndex((r) => score > r.s);
         if (slot === -1 && top.length < 10) slot = top.length;
     }
-    renderLb({ top, slot, score, token });
+    renderLb({ top, slot, score, token, loading: false });
+    renderMax();
 }
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 
-function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
+function renderLb({ top = [], slot = -1, score = 0, token = null, mine = -1, loading = false }) {
     if (!gameUi) return;
     if (!lbEl) {
+        gameUi.querySelectorAll('.lb').forEach((old) => old.remove());
         lbEl = document.createElement('div');
         lbEl.className = 'lb';
         lbEl.setAttribute('role', 'dialog');
         lbEl.setAttribute('aria-label', 'top 10 leaderboard');
-        if (lbPos) {
+        if (lbPos && window.innerWidth > 900) {
             lbEl.style.left = `${lbPos.x}px`;
             lbEl.style.top = `${lbPos.y}px`;
             lbEl.style.bottom = 'auto';
             lbEl.style.right = 'auto';
+        } else {
+            lbEl.style.left = '';
+            lbEl.style.top = '';
+            lbEl.style.bottom = '';
+            lbEl.style.right = '';
         }
         lbEl.addEventListener('pointerdown', (e) => e.stopPropagation());
         gameUi.appendChild(lbEl);
@@ -1831,7 +1862,7 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
         requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('show')));
     }
     lbOpen = true;
-    lbEntry = slot >= 0;
+    lbEntry = slot >= 0 && !loading;
     hideBeeTooltip();
     topSection.classList.add('lb-on');
     renderMax();
@@ -1855,14 +1886,28 @@ function renderLb({ top, slot = -1, score = 0, token = null, mine = -1 }) {
     const x = document.createElement('button');
     x.type = 'button';
     x.className = 'lb-x';
-    x.textContent = slot >= 0 ? 'skip' : '✕';
-    x.setAttribute('aria-label', slot >= 0 ? 'Salta inserimento' : 'Chiudi classifica');
+    x.textContent = (slot >= 0 && !loading) ? 'skip' : '✕';
+    x.setAttribute('aria-label', (slot >= 0 && !loading) ? 'Salta inserimento' : 'Chiudi classifica');
     head.append(handleIcon, title, x);
 
     makeDraggable(el, head);
 
     const list = document.createElement('ol');
     list.className = 'lb-list';
+
+    if (loading) {
+        const li = document.createElement('li');
+        li.className = 'lb-empty lb-loading';
+        li.textContent = 'loading leaderboard...';
+        list.appendChild(li);
+        el.append(head, list);
+
+        x.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeLeaderboard();
+        });
+        return;
+    }
 
     const rows = top.map((r, i) => ({ n: r.n, s: r.s, mine: i === mine }));
     if (slot >= 0) rows.splice(slot, 0, { entry: true });
@@ -1967,6 +2012,7 @@ function closeLeaderboard() {
     if (topSection) topSection.classList.remove('lb-on');
     lbOpen = false;
     lbEntry = false;
+    lbLoading = false;
     renderMax();
     if (!lbEl) { isNearBee = false; return; }
     const el = lbEl;
@@ -2008,6 +2054,11 @@ if (topSection && landing && gameUi) {
         const moved = Math.hypot(e.clientX - tapDown.x, e.clientY - tapDown.y);
         tapDown = null;
         if (moved > 12) return;
+        if (window.innerWidth <= 900) {
+            // Disabled minigame on mobile
+            if (lbOpen && !lbEntry) closeLeaderboard();
+            return;
+        }
         if (gameState !== 'idle' || phase !== 'landing' || isTransitioning) return;
         if (e.target.closest('.spawned-flower')) return;
 
